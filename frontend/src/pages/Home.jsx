@@ -441,7 +441,7 @@ const cardStyle = {
   cursor: "pointer",
   transition: "all 0.3s ease",
 };
-
+  
 const primaryBtn = {
   background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
   color: "white",

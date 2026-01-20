@@ -5,7 +5,6 @@ import { api } from "../services/api";
 
 export default function Planner() {
   const [waypoints, setWaypoints] = useState([]);
-
   const [userPosition, setUserPosition] = useState(null);
   const [roverPosition, setRoverPosition] = useState(null);
 
@@ -31,7 +30,7 @@ export default function Planner() {
     );
   }, []);
 
-  /* 🚗 SIMULATED ROVER MOVEMENT (FIXED) */
+  /* 🚗 SIMULATED ROVER MOVEMENT */
   useEffect(() => {
     if (!roverPosition) return;
 
@@ -43,7 +42,7 @@ export default function Planner() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []); // ✅ RUN ONCE
+  }, [roverPosition]);
 
   /* ➕ ADD WAYPOINT */
   const handleAddWaypoint = async (point) => {
@@ -57,29 +56,42 @@ export default function Planner() {
       setWaypoints((prev) => [...prev, res.data]);
     } catch (err) {
       console.error("Failed to save waypoint", err);
+      alert("Failed to save waypoint");
     }
   };
 
   /* ❌ CLEAR ROUTE */
   const clearRoute = async () => {
-    await api.delete("/waypoints");
-    setWaypoints([]);
+    try {
+      await api.delete("/waypoints");
+      setWaypoints([]);
+    } catch (err) {
+      console.error("Failed to clear route", err);
+      alert("Failed to clear route");
+    }
   };
 
   if (!userPosition) {
-    return <div style={{ padding: 40 }}>📡 Detecting your location…</div>;
+    return (
+      <div style={{ padding: 40, fontSize: 18 }}>
+        📡 Detecting your location…
+      </div>
+    );
   }
 
   return (
     <div style={{ height: "100vh", display: "flex" }}>
       {/* 🗺 MAP */}
-      <div style={{ width: "70%" }}>
+      <div style={{ width: "70%", height: "100%" }}>
         <MapContainer
           center={[userPosition.lat, userPosition.lng]}
           zoom={15}
           style={{ height: "100%", width: "100%" }}
         >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <TileLayer
+            attribution="&copy; OpenStreetMap contributors"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
           <MapView
             waypoints={waypoints}
@@ -92,7 +104,13 @@ export default function Planner() {
 
       {/* 📊 SIDE PANEL */}
       <div style={sidePanelStyle}>
-        <h3>📍 Waypoints</h3>
+        <h3 style={{ marginBottom: 12 }}>📍 Waypoints</h3>
+
+        {waypoints.length === 0 && (
+          <p style={{ opacity: 0.6 }}>
+            Click on the map to add waypoints
+          </p>
+        )}
 
         {waypoints.map((wp, i) => (
           <div key={i} style={waypointCard}>
@@ -116,6 +134,7 @@ const sidePanelStyle = {
   background: "#020617",
   color: "white",
   padding: "20px",
+  overflowY: "auto",
 };
 
 const waypointCard = {
@@ -133,4 +152,5 @@ const clearBtn = {
   color: "white",
   border: "none",
   borderRadius: "8px",
+  cursor: "pointer",
 };
