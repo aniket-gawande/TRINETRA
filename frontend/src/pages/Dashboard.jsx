@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
+import { api } from "../services/api";
 
 export default function Dashboard() {
-  const [data, setData] = useState({
-    aqi: 85,
-    temperature: 32,
-    humidity: 58,
-    waterLevel: 12,
-    fire: false,
-  });
+  const [data, setData] = useState(null);
 
-  // 🔁 Fake live update
+  /* 📡 FETCH LIVE SENSOR DATA FROM BACKEND */
   useEffect(() => {
-    const interval = setInterval(() => {
-      setData((prev) => ({
-        aqi: Math.floor(Math.random() * 200),
-        temperature: 25 + Math.random() * 10,
-        humidity: 40 + Math.random() * 30,
-        waterLevel: Math.floor(Math.random() * 30),
-        fire: Math.random() > 0.8,
-      }));
-    }, 3000);
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get("/sensors/latest");
+        setData(res.data);
+      } catch {
+        console.log("Waiting for sensor data...");
+      }
+    }, 2000);
 
     return () => clearInterval(interval);
   }, []);
+
+  if (!data) {
+    return <div style={{ padding: 40 }}>📡 Waiting for sensor data…</div>;
+  }
 
   return (
     <div style={{ padding: "40px" }}>
@@ -30,16 +28,10 @@ export default function Dashboard() {
         🌍 Climate Mission Control
       </h1>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "20px",
-        }}
-      >
+      <div style={gridStyle}>
         <Card title="AQI (PM2.5)" value={data.aqi} />
-        <Card title="Temperature (°C)" value={data.temperature.toFixed(1)} />
-        <Card title="Humidity (%)" value={data.humidity.toFixed(0)} />
+        <Card title="Temperature (°C)" value={data.temperature} />
+        <Card title="Humidity (%)" value={data.humidity} />
         <Card title="Water Level (cm)" value={data.waterLevel} />
         <Card
           title="Fire Status"
@@ -52,17 +44,22 @@ export default function Dashboard() {
 
 function Card({ title, value }) {
   return (
-    <div
-      style={{
-        padding: "20px",
-        background: "#0f172a",
-        color: "white",
-        borderRadius: "10px",
-      }}
-    >
+    <div style={cardStyle}>
       <h3 style={{ fontSize: "16px", opacity: 0.8 }}>{title}</h3>
       <p style={{ fontSize: "26px", fontWeight: "bold" }}>{value}</p>
     </div>
   );
 }
-    
+
+const gridStyle = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+  gap: "20px",
+};
+
+const cardStyle = {
+  padding: "20px",
+  background: "#0f172a",
+  color: "white",
+  borderRadius: "10px",
+};

@@ -1,8 +1,7 @@
 import Waypoint from "../models/waypoint.model.js";
 
-
-// ➕ CREATE WAYPOINT
-export async function createWaypoint(req, res) {
+// ➕ ADD WAYPOINT
+export async function addWaypoint(req, res) {
   try {
     const { lat, lng, order } = req.body;
 

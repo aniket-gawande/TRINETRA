@@ -1,18 +1,19 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
+
+import roverRoutes from "./routes/rover.routes.js";
+import waypointRoutes from "./routes/waypoint.routes.js";
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/waypoints", require("./routes/waypoint.routes"));
+app.use("/api/rover", roverRoutes);
+app.use("/api/waypoints", waypointRoutes);
 
-// Health check
 app.get("/", (req, res) => {
-  res.send("Trinetra Backend is Running 🚀");
+  res.send("🚀 TRINETRA Backend Running");
 });
 
-module.exports = app;
+export default app;

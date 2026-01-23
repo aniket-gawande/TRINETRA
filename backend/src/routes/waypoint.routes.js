@@ -1,14 +1,15 @@
-const express = require("express");
+import express from "express";
+import {
+  getWaypoints,
+  addWaypoint,
+  clearWaypoints,
+} from "../controllers/waypoint.controller.js";
+
 const router = express.Router();
-const controller = require("../controllers/waypoint.controller");
 
-// CREATE waypoint
-router.post("/", controller.createWaypoint);
+/* 📍 Waypoints API */
+router.get("/", getWaypoints);      // ESP + frontend fetch
+router.post("/", addWaypoint);      // frontend add waypoint
+router.delete("/", clearWaypoints); // clear route
 
-// GET all waypoints
-router.get("/", controller.getWaypoints);
-
-// CLEAR all waypoints
-router.delete("/", controller.clearWaypoints);
-
-module.exports = router;
+export default router;
