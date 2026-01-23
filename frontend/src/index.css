@@ -1,10 +1,49 @@
-html, body, #root {
-  height: 100%;
+/* frontend/src/index.css */
+:root {
+  --bg-dark: #020604;
+  --bg-card: rgba(20, 40, 30, 0.4);
+  --bg-card-hover: rgba(30, 60, 45, 0.6);
+  --primary: #10B981; /* Emerald Green */
+  --primary-glow: rgba(16, 185, 129, 0.4);
+  --accent: #F59E0B; /* Gold/Amber */
+  --text-main: #ECFDF5;
+  --text-muted: #6EE7B7;
+  --border-light: rgba(255, 255, 255, 0.1);
+  --glass: blur(12px);
+  --font-main: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-/* 🔥 REQUIRED FOR LEAFLET CONTROLS */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.05), transparent 25%);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
 }
