@@ -6,40 +6,54 @@ import "leaflet/dist/leaflet.css";
 
 export default function Planner() {
   const [waypoints, setWaypoints] = useState([]);
-  const [userPosition, setUserPosition] = useState(null);
+  // 📍 DEFAULT TO PCCOE (Prevents blank screen if GPS fails)
+  const [userPosition, setUserPosition] = useState({ lat: 18.6517, lng: 73.7615 });
   const [roverPosition, setRoverPosition] = useState(null);
 
-  /* 📍 USER LOCATION (MAP CENTER ONLY) */
+  /* 📍 GET REAL USER LOCATION (Overwrites default if allowed) */
   useEffect(() => {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserPosition({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-      },
-      () => alert("Please allow location access"),
-      { enableHighAccuracy: true }
-    );
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserPosition({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+        },
+        (err) => console.log("⚠️ GPS Access Denied, using default."),
+        { enableHighAccuracy: true }
+      );
+    }
   }, []);
 
-  /* 🚗 FETCH ROVER GPS (BACKEND → ESP32) */
+  /* 🚗 FETCH ROVER GPS */
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await api.get("/rover/location");
+        const res = await api.get("/rover/gps"); // Ensure this matches backend route
         if (res.data?.lat && res.data?.lng) {
           setRoverPosition(res.data);
         }
       } catch {
-        setRoverPosition(null);
+        // console.log("Rover offline");
       }
     }, 2000);
-
     return () => clearInterval(interval);
   }, []);
+
+  /* 📤 LOAD SAVED WAYPOINTS */
+  useEffect(() => {
+    fetchWaypoints();
+  }, []);
+
+  const fetchWaypoints = async () => {
+    try {
+      const res = await api.get("/waypoints");
+      setWaypoints(res.data);
+    } catch (err) {
+      console.error("Failed to fetch waypoints");
+    }
+  };
 
   /* ➕ ADD WAYPOINT */
   const handleAddWaypoint = async (point) => {
@@ -49,7 +63,6 @@ export default function Planner() {
         lng: point.lng,
         order: waypoints.length + 1,
       });
-
       setWaypoints((prev) => [...prev, res.data]);
     } catch {
       alert("Failed to save waypoint");
@@ -66,10 +79,6 @@ export default function Planner() {
     }
   };
 
-  if (!userPosition) {
-    return <div style={{ padding: 40 }}>📡 Detecting your location…</div>;
-  }
-
   return (
     <div style={styles.page}>
       {/* 🧭 SIDEBAR */}
@@ -78,14 +87,13 @@ export default function Planner() {
 
         <div style={styles.list}>
           {waypoints.length === 0 && (
-            <p style={styles.muted}>Click on the map to add waypoints</p>
+            <p style={styles.muted}>Click on map to add waypoints</p>
           )}
-
           {waypoints.map((wp, i) => (
             <div key={wp._id || i} style={styles.card}>
               <b>WP {i + 1}</b>
-              <div>Lat: {wp.lat.toFixed(5)}</div>
-              <div>Lng: {wp.lng.toFixed(5)}</div>
+              <div>Lat: {Number(wp.lat).toFixed(5)}</div>
+              <div>Lng: {Number(wp.lng).toFixed(5)}</div>
             </div>
           ))}
         </div>
@@ -104,11 +112,11 @@ export default function Planner() {
       <main style={styles.mapWrapper}>
         <MapContainer
           center={[userPosition.lat, userPosition.lng]}
-          zoom={15}
+          zoom={18}
           style={styles.map}
         >
           <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
+            attribution="&copy; OpenStreetMap"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
@@ -143,20 +151,9 @@ const styles = {
     display: "flex",
     flexDirection: "column",
   },
-  title: {
-    marginBottom: "20px",
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  list: {
-    flex: 1,
-    overflowY: "auto",
-    marginBottom: "20px",
-  },
-  muted: {
-    opacity: 0.6,
-    fontSize: "14px",
-  },
+  title: { marginBottom: "20px", fontSize: "20px", fontWeight: "bold" },
+  list: { flex: 1, overflowY: "auto", marginBottom: "20px" },
+  muted: { opacity: 0.6, fontSize: "14px" },
   card: {
     border: "1px solid #2563eb",
     borderRadius: "8px",
@@ -175,19 +172,7 @@ const styles = {
     fontWeight: "bold",
     marginBottom: "15px",
   },
-  status: {
-    fontSize: "12px",
-    opacity: 0.7,
-    textAlign: "center",
-  },
-  mapWrapper: {
-    flex: 1,
-    height: "100vh",
-    overflow: "hidden",
-    background: "#000",
-  },
-  map: {
-    height: "100%",
-    width: "100%",
-  },
+  status: { fontSize: "12px", opacity: 0.7, textAlign: "center" },
+  mapWrapper: { flex: 1, height: "100vh", background: "#000" },
+  map: { height: "100%", width: "100%" },
 };
