@@ -1,76 +1,76 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useEffect, useState } from "react";
-import MapView from "../components/MapView";
+import MapView from "../components/mapview";
 import { api } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import "leaflet/dist/leaflet.css";
 
 export default function Planner() {
+  const { user } = useAuth();
   const [waypoints, setWaypoints] = useState([]);
-  // 📍 DEFAULT TO PCCOE (Prevents blank screen if GPS fails)
-  const [userPosition, setUserPosition] = useState({ lat: 18.6517, lng: 73.7615 });
+  const [userPosition, setUserPosition] = useState({ lat: 18.6517, lng: 73.7615 }); // PCCOE Default
   const [roverPosition, setRoverPosition] = useState(null);
 
-  /* 📍 GET REAL USER LOCATION (Overwrites default if allowed) */
+  // 1. Load User Location
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserPosition({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          });
-        },
-        (err) => console.log("⚠️ GPS Access Denied, using default."),
-        { enableHighAccuracy: true }
-      );
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setUserPosition({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      });
     }
   }, []);
 
-  /* 🚗 FETCH ROVER GPS */
+  // 2. Load Existing Waypoints
+  useEffect(() => {
+    if (user) {
+      api.get("/waypoints")
+        .then((res) => setWaypoints(res.data))
+        .catch((err) => console.error("Load failed", err));
+    }
+  }, [user]);
+
+  // 3. 🚗 Poll Rover Position
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await api.get("/rover/gps"); // Ensure this matches backend route
-        if (res.data?.lat && res.data?.lng) {
-          setRoverPosition(res.data);
-        }
-      } catch {
-        // console.log("Rover offline");
-      }
+        const res = await api.get("/rover/gps");
+        if (res.data?.lat) setRoverPosition(res.data);
+      } catch (e) { /* silent fail if offline */ }
     }, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  /* 📤 LOAD SAVED WAYPOINTS */
-  useEffect(() => {
-    fetchWaypoints();
-  }, []);
-
-  const fetchWaypoints = async () => {
-    try {
-      const res = await api.get("/waypoints");
-      setWaypoints(res.data);
-    } catch (err) {
-      console.error("Failed to fetch waypoints");
+  // 4. 🖱️ HANDLE CLICK & SAVE
+  const handleAddWaypoint = async (latlng) => {
+    if (!user) {
+      alert("Please login to mark waypoints");
+      return;
     }
-  };
 
-  /* ➕ ADD WAYPOINT */
-  const handleAddWaypoint = async (point) => {
     try {
-      const res = await api.post("/waypoints", {
-        lat: point.lat,
-        lng: point.lng,
+      const newPoint = {
+        lat: latlng.lat,
+        lng: latlng.lng,
         order: waypoints.length + 1,
-      });
-      setWaypoints((prev) => [...prev, res.data]);
-    } catch {
-      alert("Failed to save waypoint");
+      };
+
+      // Save to Backend
+      const res = await api.post("/waypoints", newPoint);
+      
+      // Update UI immediately
+      setWaypoints([...waypoints, res.data]); 
+
+    } catch (err) {
+      console.error("❌ Failed to save waypoint", err);
+      alert("Failed to save. Check backend console.");
     }
   };
 
-  /* ❌ CLEAR ROUTE */
   const clearRoute = async () => {
+    if (!window.confirm("Delete all waypoints?")) return;
     try {
       await api.delete("/waypoints");
       setWaypoints([]);
@@ -80,99 +80,35 @@ export default function Planner() {
   };
 
   return (
-    <div style={styles.page}>
-      {/* 🧭 SIDEBAR */}
-      <aside style={styles.sidebar}>
-        <h2 style={styles.title}>📍 Waypoints</h2>
-
-        <div style={styles.list}>
-          {waypoints.length === 0 && (
-            <p style={styles.muted}>Click on map to add waypoints</p>
-          )}
-          {waypoints.map((wp, i) => (
-            <div key={wp._id || i} style={styles.card}>
-              <b>WP {i + 1}</b>
-              <div>Lat: {Number(wp.lat).toFixed(5)}</div>
-              <div>Lng: {Number(wp.lng).toFixed(5)}</div>
-            </div>
-          ))}
+    <div style={{ display: "flex", height: "100vh", width: "100vw", paddingTop: "80px" }}>
+      <aside style={{ width: "300px", padding: "20px", background: "#0f172a", color: "white", zIndex: 500 }}>
+        <h2>📍 Route Planner</h2>
+        <div style={{ marginBottom: 20, fontSize: 14, color: user ? '#4ade80' : '#f87171' }}>
+           {user ? "● User Logged In" : "● Guest Mode (Read Only)"}
         </div>
-
-        <button onClick={clearRoute} style={styles.clearBtn}>
+        
+        <button onClick={clearRoute} style={{ background: "#dc2626", color: "white", padding: "10px", width: "100%", border: "none", borderRadius: 6, cursor: "pointer", marginBottom: 20 }}>
           Clear Route
         </button>
 
-        <div style={styles.status}>
-          Rover Status:{" "}
-          {roverPosition ? "🟢 Online" : "🔴 Offline"}
+        <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+          {waypoints.map((wp, i) => (
+            <div key={i} style={{ padding: 10, background: '#1e293b', marginBottom: 8, borderRadius: 6, fontSize: 13 }}>
+              <b>WP{i+1}</b>: {Number(wp.lat).toFixed(5)}, {Number(wp.lng).toFixed(5)}
+            </div>
+          ))}
         </div>
       </aside>
 
-      {/* 🗺 MAP */}
-      <main style={styles.mapWrapper}>
-        <MapContainer
-          center={[userPosition.lat, userPosition.lng]}
-          zoom={18}
-          style={styles.map}
-        >
-          <TileLayer
-            attribution="&copy; OpenStreetMap"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-
-          <MapView
-            waypoints={waypoints}
-            roverPosition={roverPosition}
-            userPosition={userPosition}
-            onAdd={handleAddWaypoint}
-          />
-        </MapContainer>
-      </main>
+      <MapContainer center={[userPosition.lat, userPosition.lng]} zoom={18} style={{ flex: 1 }}>
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapView 
+          waypoints={waypoints} 
+          roverPosition={roverPosition} 
+          userPosition={userPosition} 
+          onAdd={handleAddWaypoint}
+        />
+      </MapContainer>
     </div>
   );
 }
-
-/* 🎨 STYLES */
-const styles = {
-  page: {
-    display: "flex",
-    height: "100vh",
-    width: "100vw",
-    overflow: "hidden",
-    background: "#020617",
-  },
-  sidebar: {
-    width: "300px",
-    minWidth: "300px",
-    background: "#020617",
-    color: "white",
-    padding: "20px",
-    borderRight: "1px solid #1e293b",
-    display: "flex",
-    flexDirection: "column",
-  },
-  title: { marginBottom: "20px", fontSize: "20px", fontWeight: "bold" },
-  list: { flex: 1, overflowY: "auto", marginBottom: "20px" },
-  muted: { opacity: 0.6, fontSize: "14px" },
-  card: {
-    border: "1px solid #2563eb",
-    borderRadius: "8px",
-    padding: "10px",
-    marginBottom: "10px",
-    fontSize: "14px",
-    background: "#020617",
-  },
-  clearBtn: {
-    padding: "12px",
-    background: "#dc2626",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    marginBottom: "15px",
-  },
-  status: { fontSize: "12px", opacity: 0.7, textAlign: "center" },
-  mapWrapper: { flex: 1, height: "100vh", background: "#000" },
-  map: { height: "100%", width: "100%" },
-};

@@ -2,20 +2,19 @@ import axios from "axios";
 import { auth } from "../firebase";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Must match backend PORT
+  baseURL: "http://localhost:5000/api", // Make sure this matches your Backend Port
 });
 
-// 🔐 Attach Firebase token to every request
+// 🔐 Interceptor: Automatically adds the Token to every request
 api.interceptors.request.use(async (config) => {
   const user = auth.currentUser;
 
   if (user) {
     try {
-      // Force refresh token if expired
-      const token = await user.getIdToken(true);
+      const token = await user.getIdToken();
       config.headers.Authorization = `Bearer ${token}`;
     } catch (error) {
-      console.error("Error fetching token:", error);
+      console.error("Token Error:", error);
     }
   }
 

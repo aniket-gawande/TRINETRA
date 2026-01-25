@@ -1,11 +1,11 @@
 import Waypoint from "../models/waypoint.model.js";
 
-// ➕ ADD WAYPOINT
+// ➕ USER ADDS WAYPOINT
 export async function addWaypoint(req, res) {
   try {
     const { lat, lng, order } = req.body;
 
-    console.log("📥 Incoming waypoint:", req.body);
+    console.log("📥 New Waypoint Received:", { lat, lng, order });
 
     if (lat === undefined || lng === undefined) {
       return res.status(400).json({ error: "lat/lng missing" });
@@ -21,12 +21,12 @@ export async function addWaypoint(req, res) {
 
     res.status(201).json(waypoint);
   } catch (err) {
-    console.error("❌ Create failed:", err);
+    console.error("❌ Save failed:", err);
     res.status(500).json({ error: "Failed to create waypoint" });
   }
 }
 
-// 📤 GET ALL WAYPOINTS
+// 📤 ROVER GETS WAYPOINTS
 export async function getWaypoints(req, res) {
   try {
     const waypoints = await Waypoint.find().sort({ order: 1 });
@@ -36,11 +36,12 @@ export async function getWaypoints(req, res) {
   }
 }
 
-// ❌ CLEAR ALL WAYPOINTS
+// ❌ USER CLEARS WAYPOINTS
 export async function clearWaypoints(req, res) {
   try {
-    const result = await Waypoint.deleteMany({});
-    res.json({ deleted: result.deletedCount });
+    await Waypoint.deleteMany({});
+    console.log("🗑️ Route Cleared");
+    res.json({ message: "Route cleared" });
   } catch (err) {
     res.status(500).json({ error: "Failed to clear waypoints" });
   }

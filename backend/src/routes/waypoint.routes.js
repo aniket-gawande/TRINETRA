@@ -8,12 +8,12 @@ import authMiddleware from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-/* 📍 Waypoints API */
-
-// Public: Anyone (including the Rover) can READ waypoints
+/* 🤖 ESP32 ROVER ACCESS (Public) */
+// Rover calls: GET http://<IP>:5000/api/waypoints
 router.get("/", getWaypoints);
 
-// Protected: Only logged-in users can ADD or CLEAR waypoints
+/* 🔐 USER ACCESS (Protected) */
+// User calls: POST /api/waypoints
 router.post("/", authMiddleware, addWaypoint);
 router.delete("/", authMiddleware, clearWaypoints);
 
