@@ -7,8 +7,16 @@ import sensorRoutes from "./routes/sensor.routes.js";
 
 const app = express();
 
+/* 🔧 CORS CONFIGURATION 
+   Allowed origins updated to support both localhost and 127.0.0.1 
+   to prevent connection blocks during testing.
+*/
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173"
+  ],
+  credentials: true, // Important for headers/auth
   methods: ["GET", "POST", "DELETE", "PUT"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));

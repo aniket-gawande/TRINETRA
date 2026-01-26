@@ -3,6 +3,7 @@ import {
   getWaypoints,
   addWaypoint,
   clearWaypoints,
+  countWaypoints,
 } from "../controllers/waypoint.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 
@@ -16,5 +17,8 @@ router.get("/", getWaypoints);
 // User calls: POST /api/waypoints
 router.post("/", authMiddleware, addWaypoint);
 router.delete("/", authMiddleware, clearWaypoints);
+
+/* 🔍 DEBUG ENDPOINT (Public) */
+router.get("/debug/count", countWaypoints);
 
 export default router;

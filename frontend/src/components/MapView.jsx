@@ -50,6 +50,23 @@ export default function MapView({ waypoints, roverPosition, userPosition, onAdd 
     },
   });
 
+  // 🔍 Validate and convert waypoints data
+  const validWaypoints = Array.isArray(waypoints) 
+    ? waypoints.filter(wp => 
+        wp && 
+        typeof Number(wp.lat) === 'number' && 
+        typeof Number(wp.lng) === 'number' &&
+        !isNaN(Number(wp.lat)) &&
+        !isNaN(Number(wp.lng))
+      )
+    : [];
+
+  useEffect(() => {
+    if (validWaypoints.length > 0) {
+      console.log("✅ Valid waypoints to plot:", validWaypoints);
+    }
+  }, [validWaypoints]);
+
   return (
     <>
       <MapResizer />
@@ -77,15 +94,26 @@ export default function MapView({ waypoints, roverPosition, userPosition, onAdd 
       )}
 
       {/* 📍 Waypoints */}
-      {waypoints.map((wp, i) => (
-        <Marker key={wp._id || i} position={[wp.lat, wp.lng]} icon={createWaypointIcon(i + 1)}>
-          <Popup>Waypoint {i + 1}</Popup>
-        </Marker>
-      ))}
+      {validWaypoints.length > 0 ? (
+        validWaypoints.map((wp, i) => (
+          <Marker 
+            key={wp._id || i} 
+            position={[Number(wp.lat), Number(wp.lng)]} 
+            icon={createWaypointIcon(i + 1)}
+          >
+            <Popup>Waypoint {i + 1}: {Number(wp.lat).toFixed(5)}, {Number(wp.lng).toFixed(5)}</Popup>
+          </Marker>
+        ))
+      ) : (
+        <div style={{ display: 'none' }} />
+      )}
 
       {/* ➖ Route Line */}
-      {waypoints.length > 1 && (
-        <Polyline positions={waypoints.map((wp) => [wp.lat, wp.lng])} pathOptions={{ color: "#2563eb", weight: 4, dashArray: '5, 10' }} />
+      {validWaypoints.length > 1 && (
+        <Polyline 
+          positions={validWaypoints.map((wp) => [Number(wp.lat), Number(wp.lng)])} 
+          pathOptions={{ color: "#2563eb", weight: 4, dashArray: '5, 10' }} 
+        />
       )}
     </>
   );

@@ -13,10 +13,27 @@ api.interceptors.request.use(async (config) => {
     try {
       const token = await user.getIdToken();
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("✅ Token added to request for user:", user.email);
     } catch (error) {
-      console.error("Token Error:", error);
+      console.error("❌ Token Error:", error.message);
+      // Continue without token - let backend handle auth error
     }
+  } else {
+    console.warn("⚠️  No user logged in - request sent without token");
   }
 
   return config;
 });
+
+// 🔴 Response Interceptor: Handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.error("❌ Authentication Error:", error.response.data?.message);
+      // You can add logout logic here if needed
+      // auth.signOut();
+    }
+    return Promise.reject(error);
+  }
+);
