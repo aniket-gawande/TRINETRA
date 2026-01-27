@@ -86,20 +86,47 @@ export default function Planner() {
 
   // 4. Handle Click (Logic preserved)
   const handleAddWaypoint = async (latlng) => {
-    if (!user) return alert("Please login to add waypoints.");
-    
     setIsSaving(true);
-    setStatusMessage("⏳ Saving...");
+    setStatusMessage("⏳ Adding waypoint...");
     
     try {
-      const newPoint = { lat: latlng.lat, lng: latlng.lng, order: waypoints.length + 1 };
-      const res = await api.post("/waypoints", newPoint);
-      const saved = res.data.waypoint || res.data;
+      const newPoint = { 
+        lat: parseFloat(latlng.lat), 
+        lng: parseFloat(latlng.lng), 
+        order: waypoints.length + 1 
+      };
       
-      setWaypoints([...waypoints, { ...saved, lat: parseFloat(saved.lat), lng: parseFloat(saved.lng) }]);
-      setStatusMessage(`✅ Waypoint saved!`);
+      // Try to save to database if user is logged in
+      if (user) {
+        const res = await api.post("/waypoints", newPoint);
+        const saved = res.data.waypoint || res.data;
+        
+        setWaypoints([...waypoints, { 
+          ...saved, 
+          lat: parseFloat(saved.lat), 
+          lng: parseFloat(saved.lng) 
+        }]);
+      } else {
+        // Allow local waypoint addition without login
+        setWaypoints([...waypoints, {
+          lat: newPoint.lat,
+          lng: newPoint.lng,
+          order: newPoint.order,
+          _id: Date.now() // Temporary ID
+        }]);
+      }
+      
+      setStatusMessage(`✅ Waypoint added!`);
     } catch (err) {
-      setStatusMessage("❌ Failed to save");
+      console.error("❌ Error adding waypoint:", err);
+      // Still add waypoint locally even if API fails
+      setWaypoints([...waypoints, {
+        lat: parseFloat(latlng.lat),
+        lng: parseFloat(latlng.lng),
+        order: waypoints.length + 1,
+        _id: Date.now()
+      }]);
+      setStatusMessage("⚠️ Saved locally (login to sync)");
     } finally {
       setIsSaving(false);
     }
@@ -107,18 +134,27 @@ export default function Planner() {
 
   const clearRoute = async () => {
     if (!window.confirm("Delete all waypoints?")) return;
+    
     try {
-      await api.delete("/waypoints");
+      // Try to clear from database if user is logged in
+      if (user) {
+        await api.delete("/waypoints");
+      }
+      
+      // Always clear locally
       setWaypoints([]);
       setStatusMessage("🗑️ Route cleared");
     } catch (err) {
-      alert("Failed to clear");
+      console.error("Error clearing route:", err);
+      // Still clear locally even if API fails
+      setWaypoints([]);
+      setStatusMessage("🗑️ Route cleared locally");
     }
   };
 
   return (
     <div style={{ paddingTop: "80px" }}>
-      <div className="planner-container" style={{ display: "flex" }}>
+      <div className="planner-container">
         
         {/* =======================
             TOGGLE BUTTON FOR SIDEBAR (Desktop & Mobile)
@@ -127,6 +163,7 @@ export default function Planner() {
           className="sidebar-toggle-btn" 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           title={isSidebarOpen ? "Close Mission Planner" : "Open Mission Planner"}
+          style={{ zIndex: 100 }}
         >
           {isSidebarOpen ? '✕' : '☰'}
         </button>
