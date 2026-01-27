@@ -1,137 +1,8 @@
 import admin from "../config/firebaseAdmin.js";
-import Waypoint from "../models/waypoint.model.js";
-
-// 🗺️ GET ALL WAYPOINTS
-export async function getWaypoints(req, res) {
-  try {
-    const waypoints = await Waypoint.find().sort({ order: 1 });
-    res.json({
-      success: true,
-      waypoints: waypoints.map(wp => ({
-        _id: wp._id,
-        lat: wp.lat,
-        lng: wp.lng,
-        order: wp.order,
-        createdAt: wp.createdAt,
-      })),
-      count: waypoints.length,
-    });
-  } catch (error) {
-    console.error("❌ Get waypoints failed:", error);
-    res.status(500).json({ 
-      error: "Failed to fetch waypoints",
-      details: error.message 
-    });
-  }
-}
-
-// ➕ ADD NEW WAYPOINT
-export async function addWaypoint(req, res) {
-  try {
-    // Accept both lat/lng and latitude/longitude formats
-    let latitude = req.body.latitude || req.body.lat;
-    let longitude = req.body.longitude || req.body.lng;
-    let order = req.body.order;
-
-    console.log("📥 Add waypoint request:", { latitude, longitude, order });
-
-    // Validate input
-    if (latitude === undefined || longitude === undefined) {
-      return res.status(400).json({ 
-        error: "Latitude/longitude (lat/lng) are required" 
-      });
-    }
-
-    // Convert to numbers if strings
-    latitude = parseFloat(latitude);
-    longitude = parseFloat(longitude);
-
-    // Validate numbers
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res.status(400).json({ 
-        error: "Latitude and longitude must be valid numbers" 
-      });
-    }
-
-    // Get highest order if not provided
-    let waypointOrder = order;
-    if (!waypointOrder) {
-      const lastWaypoint = await Waypoint.findOne().sort({ order: -1 });
-      waypointOrder = (lastWaypoint?.order || 0) + 1;
-    }
-
-    const newWaypoint = new Waypoint({
-      lat: latitude,
-      lng: longitude,
-      order: waypointOrder,
-    });
-
-    await newWaypoint.save();
-
-    console.log(`✅ Waypoint added: (${latitude}, ${longitude})`);
-
-    res.status(201).json({
-      success: true,
-      message: "Waypoint added successfully",
-      waypoint: {
-        _id: newWaypoint._id,
-        lat: newWaypoint.lat,
-        lng: newWaypoint.lng,
-        order: newWaypoint.order,
-        createdAt: newWaypoint.createdAt,
-      },
-    });
-
-  } catch (error) {
-    console.error("❌ Add waypoint failed:", error);
-    res.status(500).json({ 
-      error: "Failed to add waypoint",
-      details: error.message 
-    });
-  }
-}
-
-// 🗑️ CLEAR ALL WAYPOINTS
-export async function clearWaypoints(req, res) {
-  try {
-    const result = await Waypoint.deleteMany({});
-
-    console.log(`✅ Cleared ${result.deletedCount} waypoints`);
-
-    res.json({
-      success: true,
-      message: "All waypoints cleared",
-      deletedCount: result.deletedCount,
-    });
-
-  } catch (error) {
-    console.error("❌ Clear waypoints failed:", error);
-    res.status(500).json({ 
-      error: "Failed to clear waypoints",
-      details: error.message 
-    });
-  }
-}
-
-// 🔍 COUNT WAYPOINTS
-export async function countWaypoints(req, res) {
-  try {
-    const count = await Waypoint.countDocuments();
-    res.json({
-      success: true,
-      count: count,
-    });
-  } catch (error) {
-    console.error("❌ Count waypoints failed:", error);
-    res.status(500).json({ 
-      error: "Failed to count waypoints",
-      details: error.message 
-    });
-  }
-}
+import User from "../models/user.model.js";
 
 // 🔄 SYNC USER WITH BACKEND (The Handshake)
-/*export async function syncUser(req, res) {
+export async function syncUser(req, res) {
   try {
     const { role } = req.body;
     const firebaseUser = req.user; // From auth middleware (decoded Firebase token)
@@ -196,17 +67,19 @@ export async function countWaypoints(req, res) {
   }
 }
 
-// 👤 GET CURRENT USER PROFILE (Commented - User functions in separate controller)
-/*
+// 👤 GET CURRENT USER PROFILE
 export async function getCurrentUser(req, res) {
   try {
-    const firebaseUser = req.user;
+    const firebaseUser = req.user; // From auth middleware
+
     const user = await User.findOne({ firebaseUid: firebaseUser.uid });
+
     if (!user) {
       return res.status(404).json({ 
         error: "User not found in database. Please login again." 
       });
     }
+
     res.json({
       success: true,
       user: {
@@ -218,6 +91,7 @@ export async function getCurrentUser(req, res) {
         lastLogin: user.lastLogin,
       }
     });
+
   } catch (error) {
     console.error("❌ Get user failed:", error);
     res.status(500).json({ 
@@ -227,10 +101,12 @@ export async function getCurrentUser(req, res) {
   }
 }
 
+// 📝 UPDATE USER PROFILE
 export async function updateUserProfile(req, res) {
   try {
     const firebaseUser = req.user;
     const { name } = req.body;
+
     const user = await User.findOneAndUpdate(
       { firebaseUid: firebaseUser.uid },
       { 
@@ -239,10 +115,13 @@ export async function updateUserProfile(req, res) {
       },
       { new: true }
     );
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
     console.log(`✅ Profile updated for ${user.email}`);
+
     res.json({
       success: true,
       message: "Profile updated successfully",
@@ -253,6 +132,7 @@ export async function updateUserProfile(req, res) {
         role: user.role,
       }
     });
+
   } catch (error) {
     console.error("❌ Update profile failed:", error);
     res.status(500).json({ 
@@ -262,21 +142,26 @@ export async function updateUserProfile(req, res) {
   }
 }
 
+// 🔍 CHECK IF USER HAS ROLE (Utility endpoint)
 export async function checkUserRole(req, res) {
   try {
     const firebaseUser = req.user;
+
     const user = await User.findOne({ firebaseUid: firebaseUser.uid });
+
     if (!user) {
       return res.status(404).json({ 
         hasRole: false,
         message: "User not found" 
       });
     }
+
     res.json({
       hasRole: true,
       role: user.role,
       email: user.email
     });
+
   } catch (error) {
     console.error("❌ Check role failed:", error);
     res.status(500).json({ 
@@ -284,5 +169,4 @@ export async function checkUserRole(req, res) {
       details: error.message 
     });
   }
-}
-*/
+}   

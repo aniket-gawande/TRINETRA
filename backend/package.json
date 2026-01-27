@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "type":"module",
+  "type": "module",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -12,11 +12,13 @@
   "author": "Aniket Gawande",
   "license": "ISC",
   "dependencies": {
+    "@serialport/parser-readline": "^11.0.1",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "firebase-admin": "^13.6.0",
-    "mongoose": "^9.1.2"
+    "mongoose": "^9.1.2",
+    "serialport": "^11.0.1"
   }
 }

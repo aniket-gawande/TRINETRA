@@ -1,0 +1,914 @@
+/* Dashboard.css - FULLY RESPONSIVE */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+  padding-top: clamp(6rem, 10vw, 8rem);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+}
+
+.dashboard-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #0f172a;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+.spinner {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   HEADER - RESPONSIVE
+   ============================================ */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.dashboard-header h1 {
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 700;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.dashboard-header p {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: #cbd5e1;
+  opacity: 0.8;
+}
+
+/* ============================================
+   SENSOR DATA SECTION - RESPONSIVE
+   ============================================ */
+.sensors-section {
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.sensors-section h2 {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  color: #e2e8f0;
+  padding: 0 clamp(0rem, 2vw, 1rem);
+}
+
+.sensors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.sensor-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 2px solid #475569;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.sensor-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.sensor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+}
+
+@media (max-width: 768px) {
+  .sensor-card:active {
+    transform: translateY(-2px);
+  }
+}
+
+.sensor-card.sensor-safe::before {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.sensor-card.sensor-moderate::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.sensor-card.sensor-warning::before {
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.sensor-card.sensor-danger::before {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.sensor-card.sensor-neutral::before {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.card-icon {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  margin-bottom: 0.75rem;
+}
+
+.sensor-card h3 {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: #cbd5e1;
+  margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
+  font-weight: 500;
+}
+
+.card-value {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0.25rem;
+}
+
+.card-unit {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: #94a3b8;
+  margin-left: 0.25rem;
+}
+
+.card-status {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* ============================================
+   SOIL QUALITY SECTION - RESPONSIVE
+   ============================================ */
+.soil-quality-section {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  background: rgba(15, 23, 42, 0.5);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border-radius: clamp(10px, 2vw, 15px);
+  border: 1px solid #334155;
+}
+
+.soil-quality-section h2 {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  color: #e2e8f0;
+}
+
+.soil-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.soil-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #475569;
+  transition: all 0.3s ease;
+}
+
+.soil-card.optimal {
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.soil-card.needs-attention {
+  border-color: #f59e0b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+}
+
+.soil-card h4 {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.soil-value {
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+}
+
+.soil-range {
+  font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.soil-description {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.soil-indicator {
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.indicator-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   CHARTS SECTION - RESPONSIVE
+   ============================================ */
+.charts-section {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2rem);
+}
+
+.chart-container {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid #475569;
+  overflow: hidden;
+}
+
+.chart-container h3 {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: #e2e8f0;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.chart-container svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Recharts customization */
+.recharts-wrapper {
+  outline: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.recharts-surface {
+  background: transparent !important;
+}
+
+.recharts-text {
+  fill: #cbd5e1;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+.recharts-cartesian-axis-line {
+  stroke: #475569;
+}
+
+.recharts-cartesian-axis-tick {
+  fill: #94a3b8;
+}
+
+.recharts-legend-wrapper {
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+.recharts-legend-item {
+  color: #cbd5e1 !important;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem) !important;
+}
+
+/* ============================================
+   GOOGLE SHEETS SECTION - RESPONSIVE
+   ============================================ */
+.google-sheets-section {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.google-sheets-section h2 {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  color: #e2e8f0;
+}
+
+.sheets-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border: 1px solid #475569;
+  text-align: center;
+}
+
+.sheets-card p {
+  color: #cbd5e1;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.sheets-input {
+  display: flex;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sheets-input input {
+  flex: 1;
+  min-width: 200px;
+  padding: clamp(0.75rem, 1.5vw, 1rem);
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: white;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  transition: all 0.3s ease;
+}
+
+.sheets-input input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+@media (max-width: 768px) {
+  .sheets-input {
+    flex-direction: column;
+  }
+
+  .sheets-input input {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+.btn-sync {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-sync:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-sync:active {
+  transform: scale(0.98);
+}
+
+.hint {
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  color: #94a3b8;
+  text-align: left;
+  display: inline-block;
+  background: #0f172a;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border-radius: 6px;
+  border-left: 3px solid #10b981;
+  line-height: 1.6;
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ============================================
+   ROVER SECTION - RESPONSIVE
+   ============================================ */
+.rover-section {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.rover-section h2 {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  color: #e2e8f0;
+}
+
+.rover-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border: 1px solid #475569;
+  text-align: center;
+}
+
+.rover-card p {
+  color: #cbd5e1;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  border: none;
+  border-radius: 6px;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #10b981;
+  border: 2px solid #10b981;
+}
+
+.btn-secondary:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+@media (max-width: 1024px) {
+  .sensors-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .soil-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding-top: clamp(5.5rem, 8vw, 7rem);
+  }
+
+  .sensors-grid,
+  .soil-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .sheets-input {
+    flex-direction: column;
+  }
+
+  .sheets-input input {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: clamp(1rem, 3vw, 1.5rem);
+    padding-top: clamp(5rem, 8vw, 6rem);
+  }
+
+  .sensors-grid,
+  .soil-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sensor-card,
+  .soil-card {
+    padding: 1rem;
+  }
+
+  .card-value {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .sheets-input {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sheets-input input {
+    width: 100%;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .sensor-card,
+  .soil-card,
+  .chart-container,
+  .sheets-card,
+  .rover-card {
+    min-height: 44px;
+  }
+
+  button, .btn-primary, .btn-secondary, .btn-sync {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+}
+
+.card-unit {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-left: 5px;
+}
+
+.card-status {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ============================================
+   SOIL QUALITY SECTION
+   ============================================ */
+.soil-quality-section {
+  margin-bottom: 50px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #334155;
+}
+
+.soil-quality-section h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #e2e8f0;
+}
+
+.soil-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.soil-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #475569;
+  transition: all 0.3s ease;
+}
+
+.soil-card.optimal {
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.soil-card.needs-attention {
+  border-color: #f59e0b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+}
+
+.soil-card h4 {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+}
+
+.soil-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.soil-range {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.soil-description {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 15px;
+}
+
+.soil-indicator {
+  width: 100%;
+  height: 8px;
+  background: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.indicator-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   CHARTS SECTION
+   ============================================ */
+.charts-section {
+  margin-bottom: 50px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+.chart-container {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #475569;
+}
+
+.chart-container h3 {
+  font-size: 20px;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.chart-container svg {
+  width: 100%;
+}
+
+/* Recharts customization */
+.recharts-wrapper {
+  outline: none;
+}
+
+.recharts-surface {
+  background: transparent !important;
+}
+
+.recharts-text {
+  fill: #cbd5e1;
+}
+
+.recharts-cartesian-axis-line {
+  stroke: #475569;
+}
+
+.recharts-cartesian-axis-tick {
+  fill: #94a3b8;
+}
+
+.recharts-legend-wrapper {
+  padding-top: 20px;
+}
+
+.recharts-legend-item {
+  color: #cbd5e1 !important;
+}
+
+/* ============================================
+   GOOGLE SHEETS SECTION
+   ============================================ */
+.google-sheets-section {
+  margin-bottom: 50px;
+}
+
+.google-sheets-section h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #e2e8f0;
+}
+
+.sheets-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 30px;
+  border: 1px solid #475569;
+  text-align: center;
+}
+
+.sheets-card p {
+  color: #cbd5e1;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.sheets-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sheets-input input {
+  flex: 1;
+  min-width: 300px;
+  padding: 12px 16px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.sheets-input input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.btn-sync {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-sync:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.hint {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: left;
+  display: inline-block;
+  background: #0f172a;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 3px solid #10b981;
+  line-height: 1.6;
+}
+
+/* ============================================
+   ROVER SECTION
+   ============================================ */
+.rover-section {
+  margin-bottom: 50px;
+}
+
+.rover-section h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #e2e8f0;
+}
+
+.rover-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 30px;
+  border: 1px solid #475569;
+  text-align: center;
+}
+
+.rover-card p {
+  color: #cbd5e1;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px 5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #10b981;
+  border: 2px solid #10b981;
+}
+
+.btn-secondary:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 20px 10px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 32px;
+  }
+
+  .sensors-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .soil-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .sheets-input {
+    flex-direction: column;
+  }
+
+  .sheets-input input {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 15px 5px;
+    padding-top: 80px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .sensors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sensor-card {
+    padding: 15px;
+  }
+
+  .card-value {
+    font-size: 24px;
+  }
+}

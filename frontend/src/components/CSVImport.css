@@ -1,0 +1,407 @@
+/* CSVImport.css - FULLY RESPONSIVE */
+
+.csv-import-container {
+  width: 100%;
+  max-width: 800px;
+  margin: clamp(1rem, 3vw, 2rem) auto;
+  padding: 0 clamp(1rem, 2vw, 2rem);
+}
+
+.csv-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border: 1px solid #475569;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.csv-card h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.import-section {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-label {
+  position: relative;
+  flex: 1;
+  min-width: clamp(150px, 40vw, 250px);
+}
+
+.file-label input[type="file"] {
+  display: none;
+}
+
+.file-button {
+  display: block;
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  background: #0f172a;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-align: center;
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  color: #e2e8f0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-label input[type="file"]:hover:not(:disabled) + .file-button {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.file-label input[type="file"]:focus + .file-button {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+.file-label input[type="file"]:disabled + .file-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-import {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-import:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-import:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-import:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-container {
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  display: none;
+}
+
+.progress-container.visible {
+  display: block;
+}
+
+.progress-label {
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.message {
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border-radius: 8px;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  border-left: 4px solid;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: #10b981;
+  color: #86efac;
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.csv-info {
+  background: #0f172a;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+.csv-info h4 {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  color: #e2e8f0;
+  margin-top: clamp(1rem, 2vw, 1.25rem);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.csv-info h4:first-child {
+  margin-top: 0;
+}
+
+.csv-info p {
+  color: #cbd5e1;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 0.875rem);
+  line-height: 1.5;
+}
+
+.csv-info ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: clamp(1rem, 2vw, 1.25rem);
+}
+
+.csv-info li {
+  color: #cbd5e1;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  padding: clamp(0.25rem, 1vw, 0.5rem) 0;
+  padding-left: clamp(1.25rem, 3vw, 1.75rem);
+  position: relative;
+  line-height: 1.5;
+}
+
+.csv-info li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.csv-info pre {
+  background: #1e293b;
+  padding: clamp(0.75rem, 2vw, 1rem);
+  border-radius: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+  color: #cbd5e1;
+  border: 1px solid #475569;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+}
+
+.csv-download {
+  display: inline-block;
+  margin-top: 0.75rem;
+}
+
+.csv-download a {
+  color: #10b981;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.csv-download a:hover {
+  color: #34d399;
+  text-decoration: underline;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Tablet - 768px and below */
+@media (max-width: 768px) {
+  .csv-import-container {
+    margin: clamp(1rem, 2vw, 1.5rem) auto;
+    padding: 0 clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .csv-card {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  .import-section {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .file-label {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .file-button {
+    width: 100%;
+  }
+
+  .btn-import {
+    width: 100%;
+  }
+}
+
+/* Mobile - 480px and below */
+@media (max-width: 480px) {
+  .csv-import-container {
+    margin: clamp(0.75rem, 2vw, 1rem) auto;
+    padding: 0 clamp(0.75rem, 2vw, 1rem);
+  }
+
+  .csv-card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .csv-card h3 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .import-section {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .file-label,
+  .file-button,
+  .btn-import {
+    width: 100%;
+  }
+
+  .file-button {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-import {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .message {
+    padding: 0.875rem;
+    font-size: 0.8rem;
+  }
+
+  .csv-info {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .csv-info h4 {
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+  }
+
+  .csv-info p,
+  .csv-info li {
+    font-size: 0.75rem;
+  }
+
+  .csv-info pre {
+    font-size: 0.65rem;
+    padding: 0.75rem;
+    max-width: 100%;
+  }
+}
+
+/* ============================================
+   TOUCH-FRIENDLY ADJUSTMENTS
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  .file-button,
+  .btn-import {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .file-label input[type="file"]:active + .file-button {
+    background: rgba(16, 185, 129, 0.2);
+  }
+
+  .btn-import:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .import-section,
+  .progress-container,
+  .btn-import {
+    display: none;
+  }
+
+  .csv-card {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+  .csv-info {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+}

@@ -37,7 +37,16 @@ function RecenterMap({ position }) {
 /* 📏 RESIZE FIX (Prevents grey tiles) */
 function MapResizer() {
   const map = useMap();
-  useEffect(() => { setTimeout(() => { map.invalidateSize(); }, 500); }, [map]);
+  useEffect(() => { 
+    const timer = setTimeout(() => { 
+      try {
+        map.invalidateSize(); 
+      } catch (e) {
+        console.warn("⚠️ Map resize error:", e.message);
+      }
+    }, 500); 
+    return () => clearTimeout(timer);
+  }, [map]);
   return null;
 }
 

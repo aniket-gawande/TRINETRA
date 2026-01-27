@@ -1,0 +1,436 @@
+/* planner.css - FULLY RESPONSIVE WITH SIDEBAR TOGGLE */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.planner-container {
+  display: flex;
+  height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  overflow: hidden;
+}
+
+/* ============================================
+   SIDEBAR - RESPONSIVE
+   ============================================ */
+.sidebar {
+  width: 340px;
+  height: 100%;
+  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+  border-right: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.sidebar-header {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid #475569;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.sidebar-header h2 {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-header p {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: #94a3b8;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: clamp(1rem, 2vw, 1.5rem) 0;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+.sidebar-footer {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-top: 1px solid #475569;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.sidebar-footer button {
+  width: 100%;
+  padding: clamp(0.75rem, 1.5vw, 1rem);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 44px;
+}
+
+.sidebar-footer button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+}
+
+.sidebar-footer button:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   MOBILE TOGGLE BUTTON
+   ============================================ */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  z-index: 49;
+  transition: all 0.3s ease;
+  min-height: 50px;
+  min-width: 50px;
+}
+
+.mobile-toggle:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   MOBILE SIDEBAR OVERLAY
+   ============================================ */
+.mobile-sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 48;
+  animation: fadeIn 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .mobile-sidebar-overlay {
+    display: block;
+  }
+
+  .mobile-sidebar-overlay.hidden {
+    display: none;
+  }
+}
+
+/* ============================================
+   MAP CONTAINER - RESPONSIVE
+   ============================================ */
+.map-container {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.leaflet-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.leaflet-control-container {
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+}
+
+.leaflet-control {
+  border-radius: 6px;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 20;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid #475569 !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  box-shadow: none !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  color: #e2e8f0 !important;
+  font-size: clamp(0.85rem, 2vw, 1rem) !important;
+  border-bottom: 1px solid #475569 !important;
+  background: transparent !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.leaflet-popup-content-wrapper .leaflet-popup-content {
+  color: #e2e8f0 !important;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem) !important;
+  margin: 8px !important;
+  line-height: 1.5;
+}
+
+.leaflet-popup-tip {
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
+}
+
+/* ============================================
+   WAYPOINT CARDS - RESPONSIVE
+   ============================================ */
+.waypoint-card {
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  margin: 0 clamp(1rem, 2vw, 1.5rem) clamp(0.75rem, 1.5vw, 1rem);
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid #64748b;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.waypoint-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.waypoint-card:hover::before {
+  transform: scaleX(1);
+}
+
+.waypoint-card:active {
+  transform: scale(0.98);
+}
+
+.waypoint-card.active {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.waypoint-card h3 {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.waypoint-card p {
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  color: #cbd5e1;
+  margin: 0.25rem 0;
+  line-height: 1.4;
+}
+
+.waypoint-coords {
+  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+  color: #94a3b8;
+  font-family: 'Monaco', 'Menlo', monospace;
+  margin-top: 0.5rem;
+  word-break: break-all;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Tablet - 768px and below */
+@media (max-width: 768px) {
+  .planner-container {
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 80px);
+    z-index: 48;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .map-container {
+    width: 100%;
+    height: calc(100vh - 80px);
+    position: relative;
+  }
+}
+
+/* Small Mobile - 480px and below */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-header {
+    padding: 1rem;
+  }
+
+  .sidebar-header h2 {
+    font-size: 1rem;
+  }
+
+  .waypoint-card {
+    margin: 0 0.75rem 0.75rem;
+    padding: 0.875rem;
+  }
+
+  .mobile-toggle {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    bottom: 20px;
+    right: 15px;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sidebar {
+  animation: slideIn 0.3s ease;
+}
+
+.sidebar.closing {
+  animation: slideOut 0.3s ease;
+}
+
+/* ============================================
+   TOUCH-FRIENDLY ADJUSTMENTS
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  .waypoint-card {
+    min-height: 60px;
+  }
+
+  .sidebar-footer button,
+  .mobile-toggle {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .waypoint-card:active {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #10b981;
+  }
+}
+
+/* ============================================
+   LANDSCAPE ORIENTATION
+   ============================================ */
+@media (max-height: 600px) and (max-width: 768px) {
+  .sidebar-header,
+  .sidebar-footer {
+    padding: 0.75rem 1rem;
+  }
+
+  .waypoint-card {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .waypoint-card h3 {
+    margin-bottom: 0.25rem;
+  }
+}

@@ -4,6 +4,13 @@ import cors from "cors";
 import roverRoutes from "./routes/rover.routes.js";
 import waypointRoutes from "./routes/waypoint.routes.js";
 import sensorRoutes from "./routes/sensor.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+
+// Import models for Bluetooth rover system
+import Rover from "./models/rover.model.js";
+import RoverImage from "./models/roverImage.model.js";
+import OfflineData from "./models/offlineData.model.js";
+import bluetoothHandler from "./services/bluetoothHandler.js";
 
 const app = express();
 
@@ -22,6 +29,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Add routes
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 TRINETRA Backend Running");

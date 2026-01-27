@@ -1,6 +1,7 @@
 import app from "./src/app.js";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import bluetoothHandler from "./src/services/bluetoothHandler.js";
 
 dotenv.config();
 
@@ -17,11 +18,33 @@ console.log("");
 console.log("🚀 Starting TRINETRA Backend Server...");
 console.log("════════════════════════════════════════");
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ Backend running on port ${PORT}`);
   console.log(`📍 API available at http://localhost:${PORT}/api`);
   console.log("");
+  
+  // Initialize Bluetooth connection to rover
+  console.log("📡 Initializing Bluetooth connection to rover...");
+  try {
+    const portName = process.env.BLUETOOTH_PORT || "COM5";
+    const baudRate = parseInt(process.env.BLUETOOTH_BAUD_RATE || "115200");
+    bluetoothHandler.initialize(portName, baudRate);
+    console.log(`✅ Bluetooth initialized on port ${portName} @ ${baudRate} baud`);
+  } catch (error) {
+    console.warn(`⚠️  Bluetooth initialization failed (will retry on demand): ${error.message}`);
+  }
+  
   console.log("⚠️  Check logs above for Firebase status");
   console.log("════════════════════════════════════════");
   console.log("");
+});
+
+// Graceful shutdown
+process.on("SIGINT", () => {
+  console.log("\n🛑 Shutting down server...");
+  bluetoothHandler.close();
+  server.close(() => {
+    console.log("✅ Server shut down gracefully");
+    process.exit(0);
+  });
 });

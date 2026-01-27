@@ -1,18 +1,22 @@
-/* frontend/src/App.css */
+/* frontend/src/App.css - RESPONSIVE DESIGN */
+
 .container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(1rem, 4vw, 2rem);
 }
 
-/* Modern Glass Card */
+/* ============================================
+   GLASS CARD - RESPONSIVE
+   ============================================ */
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: var(--glass);
   -webkit-backdrop-filter: var(--glass);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
-  padding: 2rem;
+  border-radius: 12px;
+  padding: clamp(1.25rem, 4vw, 2rem);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
 }
 
@@ -23,7 +27,27 @@
   border-color: var(--primary);
 }
 
-/* Text Effects */
+@media (max-width: 768px) {
+  .glass-card {
+    border-radius: 10px;
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-card {
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ============================================
+   TEXT EFFECTS - RESPONSIVE
+   ============================================ */
 .text-gradient {
   background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
   -webkit-background-clip: text;
@@ -38,17 +62,21 @@
   background-clip: text;
 }
 
-/* Buttons */
+/* ============================================
+   BUTTONS - RESPONSIVE
+   ============================================ */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1rem, 3vw, 1.5rem);
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -62,9 +90,13 @@
   box-shadow: 0 0 25px var(--primary-glow);
 }
 
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
 .btn-outline {
   background: transparent;
-  border: 1px solid var(--primary);
+  border: 2px solid var(--primary);
   color: var(--primary);
 }
 
@@ -73,25 +105,214 @@
   color: #fff;
 }
 
-/* Section Spacing */
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+}
+
+/* ============================================
+   SECTION SPACING - RESPONSIVE
+   ============================================ */
 .section {
-  padding: 5rem 0;
+  padding: clamp(2rem, 8vw, 5rem) 0;
 }
 
 .section-title {
-  font-size: 2.5rem;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
   font-weight: 700;
+  line-height: 1.2;
 }
 
-/* Animations */
+/* ============================================
+   GRID LAYOUTS - RESPONSIVE
+   ============================================ */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+@media (max-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   FLEX LAYOUTS - RESPONSIVE
+   ============================================ */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 1rem);
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+@media (max-width: 768px) {
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
   100% { transform: translateY(0px); }
 }
 
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .floating-img {
   animation: float 6s ease-in-out infinite;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ============================================
+   RESPONSIVE UTILITY CLASSES
+   ============================================ */
+.hidden-mobile { display: block; }
+.hidden-desktop { display: none; }
+
+@media (max-width: 768px) {
+  .hidden-mobile { display: none !important; }
+  .hidden-desktop { display: block !important; }
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+@media (max-width: 768px) {
+  .text-center { text-align: center; }
+  .text-left { text-align: center; }
+  .text-right { text-align: center; }
+}
+
+/* ============================================
+   SCROLLING & OVERFLOW
+   ============================================ */
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-x-auto { overflow-x: auto; }
+
+@media (max-width: 768px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============================================
+   TOUCH-FRIENDLY ADJUSTMENTS
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  button, input[type="button"], input[type="submit"] {
+    min-height: 44px;
+    padding: 0.75rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE FONT SIZES
+   ============================================ */
+.font-sm { font-size: clamp(0.75rem, 1vw, 0.875rem); }
+.font-base { font-size: clamp(0.875rem, 1.5vw, 1rem); }
+.font-lg { font-size: clamp(1rem, 2vw, 1.25rem); }
+.font-xl { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+.font-2xl { font-size: clamp(1.5rem, 4vw, 2rem); }
+.font-3xl { font-size: clamp(1.875rem, 5vw, 2.25rem); }
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .btn, a, button {
+    text-decoration: underline;
+  }
+
+  .glass-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
 }
