@@ -18,7 +18,7 @@ console.log("");
 console.log("🚀 Starting TRINETRA Backend Server...");
 console.log("════════════════════════════════════════");
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
   console.log(`✅ Backend running on port ${PORT}`);
   console.log(`📍 API available at http://localhost:${PORT}/api`);
   console.log("");
@@ -26,9 +26,13 @@ const server = app.listen(PORT, () => {
   // Initialize Bluetooth connection to rover
   console.log("📡 Initializing Bluetooth connection to rover...");
   try {
+    // Attempt to list ports for debugging/logging
+    await bluetoothHandler.listPorts();
+
     const portName = process.env.BLUETOOTH_PORT || "COM5";
     const baudRate = parseInt(process.env.BLUETOOTH_BAUD_RATE || "115200");
-    bluetoothHandler.initialize(portName, baudRate);
+    
+    await bluetoothHandler.initialize(portName, baudRate);
     console.log(`✅ Bluetooth initialized on port ${portName} @ ${baudRate} baud`);
   } catch (error) {
     console.warn(`⚠️  Bluetooth initialization failed (will retry on demand): ${error.message}`);

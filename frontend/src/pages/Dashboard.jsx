@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import CSVImport from "../components/CSVImport";
+import { getSimulatedCropData } from "../utils/fakeCropData";
 import {
   LineChart,
   Line,
@@ -23,7 +23,8 @@ export default function Dashboard() {
   const [historyData, setHistoryData] = useState([]);
   const [dailyStats, setDailyStats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [googleSheetUrl, setGoogleSheetUrl] = useState("");
+  const [cropImage, setCropImage] = useState(null);
+  const [cropAnalysis, setCropAnalysis] = useState(null);
 
   // Fetch latest sensor data
   useEffect(() => {
@@ -85,19 +86,34 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleGoogleSheetSync = async () => {
-    if (!googleSheetUrl.trim()) {
-      alert("Please enter a valid Google Sheets URL");
-      return;
-    }
+  // Fetch latest crop image and analysis
+  useEffect(() => {
+    const fetchCropData = async () => {
+      try {
+        // Fetch latest rover image
+        const imageRes = await api.get("/rover/latest-image");
+        if (imageRes.data?.success && imageRes.data?.image) {
+          setCropImage(imageRes.data.image);
+        }
 
-    try {
-      alert("Google Sheets integration:\n1. Create a Google Sheet\n2. Share it publicly (Anyone with link can view)\n3. Get the sheet ID from the URL\n4. We'll auto-sync data to this sheet");
-      // In production, you'd implement Google Sheets API integration here
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
+        // Generate AI-based crop analysis
+        const analysisRes = await api.get("/rover/crop-analysis");
+        if (analysisRes.data?.success) {
+          setCropAnalysis(analysisRes.data.analysis);
+        }
+      } catch (err) {
+        console.warn("⚠️  Could not fetch crop data from backend:", err.message);
+        // Use simulated data for development/demo
+        const simulated = getSimulatedCropData(latestData);
+        setCropImage(simulated.image);
+        setCropAnalysis(simulated.analysis);
+      }
+    };
+
+    fetchCropData();
+    const interval = setInterval(fetchCropData, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, [latestData]);
 
   if (loading) {
     return (
@@ -114,6 +130,88 @@ export default function Dashboard() {
         <h1>🌾 Farmer Dashboard</h1>
         <p>Real-time sensor monitoring & soil analytics</p>
       </header>
+
+      {/* Crop Analysis Section with Image */}
+      {cropImage && cropAnalysis && (
+        <section className="crop-analysis-section">
+          <h2>🌾 Crop Analysis & AI Recommendations</h2>
+          <div className="crop-analysis-container">
+            {/* Crop Image */}
+            <div className="crop-image-box">
+              <img 
+                src={cropImage.imageUrl} 
+                alt="Crop from Rover Camera" 
+                className="crop-image"
+              />
+              <p className="image-caption">📷 Captured by rover camera</p>
+            </div>
+
+            {/* Crop Details and Analysis */}
+            <div className="crop-details-box">
+              {/* Microclimate Summary */}
+              <div className="microclimate-summary">
+                <h3>🌡️ Microclimate Summary</h3>
+                <ul className="microclimate-list">
+                  <li><strong>Temp:</strong> {latestData?.temperature?.toFixed(1) || "N/A"}°C</li>
+                  <li><strong>Humidity:</strong> {latestData?.humidity?.toFixed(1) || "N/A"}%</li>
+                  <li><strong>Soil Moisture:</strong> {cropAnalysis?.soilMoisture || "N/A"}%</li>
+                  <li><strong>AQI:</strong> {latestData?.aqi?.toFixed(1) || "N/A"}</li>
+                  <li><strong>PM2.5:</strong> {cropAnalysis?.pm25 || "N/A"} Moderate</li>
+                </ul>
+              </div>
+
+              {/* Crop Analysis Results */}
+              <div className="crop-analysis-results">
+                <h3>🌱 Crop Analysis</h3>
+                <div className="health-score-box">
+                  <div className="health-score-circle">
+                    <span className="score-number">{cropAnalysis?.healthScore || 75}</span>
+                    <span className="score-label">Health Score</span>
+                  </div>
+                  <div className="analysis-metrics">
+                    <div className="metric">
+                      <span className="metric-icon">✅</span>
+                      <span className="metric-text">Disease Risk: <strong>{cropAnalysis?.diseaseRisk || "Low"}</strong></span>
+                    </div>
+                    <div className="metric">
+                      <span className="metric-icon">💧</span>
+                      <span className="metric-text">Water Need: <strong>{cropAnalysis?.waterNeed || "Moderate"}</strong></span>
+                    </div>
+                    <div className="metric">
+                      <span className="metric-icon">🌾</span>
+                      <span className="metric-text">Growth Stage: <strong>{cropAnalysis?.growthStage || "Vegetative"}</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                <div className="recommendations-box">
+                  <h4>💡 AI Recommendations</h4>
+                  <ul className="recommendations-list">
+                    {cropAnalysis?.recommendations?.map((rec, idx) => (
+                      <li key={idx}>
+                        <span className="checkmark">✔</span> {rec}
+                      </li>
+                    )) || (
+                      <>
+                        <li><span className="checkmark">✔</span> Increase Irrigation</li>
+                        <li><span className="checkmark">✔</span> Apply NPK Fertilizer</li>
+                        <li><span className="checkmark">✔</span> Use Neem Spray</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Download Buttons */}
+                <div className="download-buttons">
+                  <button className="btn-download pdf">📄 Download PDF</button>
+                  <button className="btn-download csv">📊 Download CSV</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Latest Sensor Data Cards */}
       <section className="sensors-section">
@@ -250,68 +348,6 @@ export default function Dashboard() {
           ) : (
             <p>No data available</p>
           )}
-        </div>
-      </section>
-
-      {/* CSV Data Import */}
-      <CSVImport 
-        onImportSuccess={() => {
-          // Refresh dashboard data after successful import
-          const fetchLatestData = async () => {
-            try {
-              const res = await api.get("/sensors/latest");
-              setLatestData(res.data);
-            } catch (err) {
-              console.error("Failed to refresh latest data:", err);
-            }
-          };
-          const fetchHistoryData = async () => {
-            try {
-              const res = await api.get("/sensors/history?days=7");
-              const data = res.data.data || res.data;
-              setHistoryData(Array.isArray(data) ? data : []);
-            } catch (err) {
-              console.error("Failed to fetch history data:", err);
-            }
-          };
-          const fetchDailyStats = async () => {
-            try {
-              const res = await api.get("/sensors/daily-stats?days=7");
-              const data = res.data.stats || res.data;
-              setDailyStats(Array.isArray(data) ? data : []);
-            } catch (err) {
-              console.error("Failed to fetch daily stats:", err);
-            }
-          };
-          fetchLatestData();
-          fetchHistoryData();
-          fetchDailyStats();
-        }}
-      />
-
-      {/* Google Sheets Integration */}
-      <section className="google-sheets-section">
-        <h2>📑 Google Sheets Integration</h2>
-        <div className="sheets-card">
-          <p>Sync sensor data with your Google Sheet for easy sharing and analysis</p>
-          <div className="sheets-input">
-            <input 
-              type="text"
-              placeholder="Enter Google Sheets URL"
-              value={googleSheetUrl}
-              onChange={(e) => setGoogleSheetUrl(e.target.value)}
-            />
-            <button onClick={handleGoogleSheetSync} className="btn-sync">
-              🔗 Connect Sheet
-            </button>
-          </div>
-          <p className="hint">
-            How to set up:<br/>
-            1. Create a new Google Sheet<br/>
-            2. Share it publicly (Anyone with link)<br/>
-            3. Paste the URL above<br/>
-            4. Data will auto-sync every hour
-          </p>
         </div>
       </section>
 

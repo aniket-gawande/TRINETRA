@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 
 import { auth } from "../firebase";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { api } from "../services/api";
+import "./Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import "./Analytics.css";
 
 export default function Analytics() {
   const [stats, setStats] = useState(null);

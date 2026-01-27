@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { api } from "../services/api";
+import "./Signup.css";
 
 export default function Signup() {
   const [email, setEmail] = useState("");

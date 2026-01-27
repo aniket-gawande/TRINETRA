@@ -26,7 +26,7 @@ const Home = () => {
         <div style={{ position: 'absolute', top: '20%', left: '10%', width: '300px', height: '300px', background: 'var(--primary)', filter: 'blur(150px)', opacity: '0.15', zIndex: '-1', borderRadius: '50%' }}></div>
         <div style={{ position: 'absolute', bottom: '20%', right: '10%', width: '400px', height: '400px', background: 'var(--accent)', filter: 'blur(150px)', opacity: '0.1', zIndex: '-1', borderRadius: '50%' }}></div>
 
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '3rem', alignItems: 'flex-start', paddingTop: '3rem' }}>
           
           <div className="hero-content" style={{ zIndex: 1 }}>
             <div style={{ 
@@ -69,10 +69,10 @@ const Home = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', paddingTop: '1.5rem' }}>
              <div className="floating-img" style={{ 
               width: '100%',
-              maxWidth: '550px',
+              maxWidth: '400px',
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',

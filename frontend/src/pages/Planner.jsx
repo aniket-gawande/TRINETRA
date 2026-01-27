@@ -121,9 +121,20 @@ export default function Planner() {
       <div className="planner-container" style={{ display: "flex" }}>
         
         {/* =======================
+            TOGGLE BUTTON FOR SIDEBAR (Desktop & Mobile)
+           ======================= */}
+        <button 
+          className="sidebar-toggle-btn" 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          title={isSidebarOpen ? "Close Mission Planner" : "Open Mission Planner"}
+        >
+          {isSidebarOpen ? '✕' : '☰'}
+        </button>
+        
+        {/* =======================
             LEFT SIDEBAR (Table/List)
            ======================= */}
-        <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
+        <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <div className="sidebar-header">
             <h2>Mission Planner</h2>
             <p>{waypoints.length} Waypoints Set</p>
@@ -182,7 +193,7 @@ export default function Planner() {
 
         {/* Mobile Overlay */}
         <div 
-          className={`mobile-sidebar-overlay ${!isSidebarOpen ? 'hidden' : ''}`} 
+          className={`mobile-sidebar-overlay ${isSidebarOpen ? 'visible' : 'hidden'}`} 
           onClick={() => setIsSidebarOpen(false)}
         />
 

@@ -435,8 +435,186 @@ router.post("/commands/configure", async (req, res) => {
 });
 
 /**
- * GET /api/rovers/bluetooth/status
- * Get Bluetooth connection status
+ * GET /api/rover/latest-image
+ * Get the latest rover image captured
+ */
+router.get("/latest-image", async (req, res) => {
+  try {
+    // Get the latest image from any rover
+    const image = await RoverImage.findOne()
+      .sort({ captureTime: -1 })
+      .limit(1);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "No images found"
+      });
+    }
+
+    res.json({
+      success: true,
+      image: {
+        imageId: image.imageId,
+        imageUrl: image.imageUrl,
+        fileName: image.fileName,
+        captureTime: image.captureTime,
+        roverId: image.roverId,
+        gpsCoordinates: image.gpsCoordinates
+      }
+    });
+  } catch (error) {
+    console.error("❌ Failed to fetch latest image:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch latest image" 
+    });
+  }
+});
+
+/**
+ * GET /api/rover/crop-analysis
+ * Get AI-based crop analysis and recommendations
+ */
+router.get("/crop-analysis", async (req, res) => {
+  try {
+    // Fetch latest sensor data for crop analysis
+    const Sensor = require("../models/sensor.model.js").default;
+    const latestSensor = await Sensor.findOne().sort({ createdAt: -1 });
+
+    // Generate AI-based analysis based on sensor data
+    const analysis = {
+      healthScore: calculateHealthScore(latestSensor),
+      diseaseRisk: assessDiseaseRisk(latestSensor),
+      waterNeed: assessWaterNeed(latestSensor),
+      growthStage: estimateGrowthStage(latestSensor),
+      soilMoisture: latestSensor?.humidity || 0,
+      pm25: latestSensor?.aqi || 0,
+      recommendations: generateRecommendations(latestSensor)
+    };
+
+    res.json({
+      success: true,
+      analysis
+    });
+  } catch (error) {
+    console.error("❌ Failed to generate crop analysis:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to generate crop analysis" 
+    });
+  }
+});
+
+// Helper functions for crop analysis
+function calculateHealthScore(sensorData) {
+  if (!sensorData) return 75;
+  
+  let score = 100;
+  
+  // Temperature penalty (optimal: 20-30°C)
+  if (sensorData.temperature < 15 || sensorData.temperature > 35) {
+    score -= 15;
+  }
+  
+  // Humidity penalty (optimal: 40-70%)
+  if (sensorData.humidity < 30 || sensorData.humidity > 80) {
+    score -= 10;
+  }
+  
+  // AQI penalty (lower is better)
+  if (sensorData.aqi > 100) {
+    score -= 20;
+  } else if (sensorData.aqi > 50) {
+    score -= 10;
+  }
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+function assessDiseaseRisk(sensorData) {
+  if (!sensorData) return "Moderate";
+  
+  // High humidity + warm temps = higher disease risk
+  if (sensorData.humidity > 75 && sensorData.temperature > 25) {
+    return "High";
+  }
+  if (sensorData.humidity > 65 && sensorData.temperature > 20) {
+    return "Moderate";
+  }
+  return "Low";
+}
+
+function assessWaterNeed(sensorData) {
+  if (!sensorData) return "Moderate";
+  
+  // Low humidity = high water need
+  if (sensorData.humidity < 40) {
+    return "High";
+  }
+  if (sensorData.humidity < 55) {
+    return "Moderate";
+  }
+  return "Low";
+}
+
+function estimateGrowthStage(sensorData) {
+  if (!sensorData) return "Vegetative";
+  
+  // Simple heuristic based on temperature and humidity
+  if (sensorData.temperature > 28 && sensorData.humidity > 60) {
+    return "Flowering";
+  }
+  if (sensorData.temperature > 25) {
+    return "Vegetative";
+  }
+  return "Germination";
+}
+
+function generateRecommendations(sensorData) {
+  const recommendations = [];
+  
+  if (!sensorData) {
+    return ["Increase Irrigation", "Apply NPK Fertilizer", "Use Neem Spray"];
+  }
+  
+  // Water management
+  if (sensorData.humidity < 40) {
+    recommendations.push("Increase Irrigation");
+  }
+  if (sensorData.humidity > 75) {
+    recommendations.push("Improve Drainage");
+  }
+  
+  // Disease management
+  if (sensorData.humidity > 75 && sensorData.temperature > 25) {
+    recommendations.push("Use Fungicide");
+    recommendations.push("Improve Air Circulation");
+  } else if (sensorData.humidity > 65) {
+    recommendations.push("Use Neem Spray");
+  }
+  
+  // Nutrient management
+  if (sensorData.temperature > 28) {
+    recommendations.push("Apply NPK Fertilizer");
+  }
+  
+  // Air quality
+  if (sensorData.aqi > 100) {
+    recommendations.push("Monitor Air Quality");
+  }
+  
+  // Default recommendations if list is empty
+  if (recommendations.length === 0) {
+    recommendations.push("Maintain Current Conditions");
+    recommendations.push("Monitor Crop Growth");
+  }
+  
+  return recommendations.slice(0, 4); // Return top 4 recommendations
+}
+
+/**
+ * GET /api/rover/bluetooth/status
  */
 router.get("/bluetooth/status", (req, res) => {
   const status = bluetoothHandler.getStatus();
