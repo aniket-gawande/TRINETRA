@@ -9,11 +9,23 @@ import "./Planner.css";
 export default function Planner() {
   const { user } = useAuth();
   const [waypoints, setWaypoints] = useState([]);
-  const [userPosition, setUserPosition] = useState({ lat: 18.6517, lng: 73.7615 });
+  const [userPosition, setUserPosition] = useState({
+    lat: 18.6517,
+    lng: 73.7615,
+  });
   const [roverPosition, setRoverPosition] = useState(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [mapReady, setMapReady] = useState(false);
+
+  // Rover / ESP32 status
+  const [roverStatus, setRoverStatus] = useState("Idle");
+  const [roverConnected, setRoverConnected] = useState(false);
+  const [roverIp, setRoverIp] = useState("");
+  const [pingMs, setPingMs] = useState(null);
+  const [isSendingPath, setIsSendingPath] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [isStopping, setIsStopping] = useState(false);
 
   // 1. Load User Location
   useEffect(() => {
@@ -70,16 +82,24 @@ export default function Planner() {
     }
   }, [user]);
 
-  // 3. 🚗 Poll Rover Position
+  // 3. 🚗 Poll Rover Position + connection / ping
   useEffect(() => {
     const interval = setInterval(async () => {
+      const startedAt = performance.now();
       try {
         const res = await api.get("/rover/gps");
         if (res.data && typeof res.data.lat === "number") {
           setRoverPosition(res.data);
+          setRoverConnected(true);
+          setRoverStatus("Connected");
+          if (res.data.ip) setRoverIp(res.data.ip);
+
+          const rtt = Math.round(performance.now() - startedAt);
+          setPingMs(rtt);
         }
       } catch (e) {
-        // Silent fail (offline)
+        setRoverConnected(false);
+        setRoverStatus("Disconnected");
       }
     }, 2000);
     return () => clearInterval(interval);
@@ -159,140 +179,188 @@ export default function Planner() {
   };
 
   return (
-    <div className="planner-container">
-      {/* Sidebar */}
-      <aside className="planner-sidebar">
-        <h2>📍 Route Planner</h2>
-
-        <div style={{ marginBottom: 20, fontSize: 14, color: user ? "#4ade80" : "#f87171" }}>
-          {user ? `● Logged in as ${user.email}` : "● Guest Mode (Read Only)"}
-        </div>
-
-        {/* Status Message */}
-        {statusMessage && (
-          <div
-            style={{
-              marginBottom: 15,
-              padding: 12,
-              background: statusMessage.includes("✅")
-                ? "#166534"
-                : statusMessage.includes("❌")
-                  ? "#7f1d1d"
-                  : "#1e40af",
-              borderRadius: 6,
-              fontSize: 12,
-              borderLeft:
-                "4px solid " +
-                (statusMessage.includes("✅")
-                  ? "#22c55e"
-                  : statusMessage.includes("❌")
-                    ? "#ef4444"
-                    : "#3b82f6"),
-            }}
-          >
-            {statusMessage}
-          </div>
-        )}
-
-        {user && (
-          <button
-            onClick={clearRoute}
-            disabled={isSaving || waypoints.length === 0}
-            style={{
-              background: isSaving || waypoints.length === 0 ? "#555" : "#dc2626",
-              color: "white",
-              padding: "10px",
-              width: "100%",
-              border: "none",
-              borderRadius: 6,
-              cursor: isSaving || waypoints.length === 0 ? "not-allowed" : "pointer",
-              marginBottom: 20,
-              fontWeight: "bold",
-            }}
-          >
-            {isSaving ? "⏳ Processing..." : "Clear Route"}
-          </button>
-        )}
-
-        {/* Waypoints List */}
-        <div style={{ marginBottom: 15, fontSize: 13, color: "#94a3b8", fontWeight: "bold" }}>
-          📌 Waypoints: {waypoints.length}
-        </div>
-
-        <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-          {waypoints.length === 0 && (
-            <p style={{ opacity: 0.5, fontSize: 13 }}>👉 Click on the map to add waypoints</p>
+    <div style={{ paddingTop: "80px" }}>
+      <div className="planner-container">
+        {/* Map Container */}
+        <div className="map-container">
+          {!mapReady && (
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                color: "white",
+                zIndex: 5,
+              }}
+            >
+              Loading map...
+            </div>
           )}
-          {waypoints.map((wp, i) => {
-            // Safely parse coordinates
-            const lat = typeof wp.lat === 'number' ? wp.lat : parseFloat(wp.lat);
-            const lng = typeof wp.lng === 'number' ? wp.lng : parseFloat(wp.lng);
-            const isValid = !isNaN(lat) && !isNaN(lng);
-            
-            return (
-              <div
-                key={wp._id || i}
-                style={{
-                  padding: 10,
-                  background: "#1e293b",
-                  marginBottom: 8,
-                  borderRadius: 6,
-                  fontSize: 12,
-                  border: "1px solid #334155",
-                  opacity: isValid ? 1 : 0.5
-                }}
-              >
-                <div style={{ color: "#2563eb", fontWeight: "bold", marginBottom: 4 }}>WP{i + 1}</div>
-                <div style={{ fontSize: 11, color: "#cbd5e1" }}>
-                  🔴 {isValid ? `${lat.toFixed(5)}, ${lng.toFixed(5)}` : "Invalid coordinates"}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </aside>
 
-      {/* Map Container */}
-      <div className="map-wrapper">
-        {!mapReady && (
-          <div style={{ 
-            position: "absolute", 
-            top: "50%", 
-            left: "50%", 
-            transform: "translate(-50%, -50%)", 
-            color: "white",
-            zIndex: 10
-          }}>
-            Loading map...
+          {/* Waypoint / Rover control panel (overlay card) */}
+          <div className="planner-panel">
+            <div className="planner-panel-header">
+              <span>Waypoint List</span>
+              <div className="planner-panel-header-icons">
+                <span>📡</span>
+                <span>🛰️</span>
+              </div>
+            </div>
+
+            <div className="planner-panel-body">
+              <div className="planner-panel-subheader">
+                <span>Waypoints</span>
+                <span className="badge">{waypoints.length}</span>
+              </div>
+
+              <div className="planner-waypoint-list">
+                {waypoints.length === 0 && (
+                  <p className="planner-waypoint-empty">
+                    👉 Click on the map to add waypoints
+                  </p>
+                )}
+                {waypoints.map((wp, i) => {
+                  const lat =
+                    typeof wp.lat === "number" ? wp.lat : parseFloat(wp.lat);
+                  const lng =
+                    typeof wp.lng === "number" ? wp.lng : parseFloat(wp.lng);
+                  const isValid = !isNaN(lat) && !isNaN(lng);
+
+                  return (
+                    <div key={wp._id || i} className="planner-waypoint-item">
+                      <div className="planner-waypoint-dot">WP{i + 1}</div>
+                      <div className="planner-waypoint-coords">
+                        {isValid
+                          ? `${lat.toFixed(5)}, ${lng.toFixed(5)}`
+                          : "Invalid coordinates"}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="planner-panel-buttons">
+                <button
+                  className="btn-primary"
+                  disabled={
+                    waypoints.length === 0 || isSendingPath || !user || !roverConnected
+                  }
+                  onClick={async () => {
+                    if (waypoints.length === 0) return;
+                    setIsSendingPath(true);
+                    setStatusMessage("⏳ Sending path to rover...");
+                    try {
+                      await api.post("/rover/path", { waypoints });
+                      setStatusMessage("✅ Path sent to rover");
+                      setRoverStatus("Path uploaded");
+                    } catch (err) {
+                      console.error("❌ Failed to send path:", err);
+                      setStatusMessage("❌ Failed to send path to rover");
+                    } finally {
+                      setIsSendingPath(false);
+                    }
+                  }}
+                >
+                  {isSendingPath ? "Sending..." : "Send Path to Rover"}
+                </button>
+
+                <button
+                  className="btn-success"
+                  disabled={isStarting || !user}
+                  onClick={async () => {
+                    setIsStarting(true);
+                    setStatusMessage("⏳ Starting navigation...");
+                    try {
+                      await api.post("/rover/start");
+                      setStatusMessage("✅ Rover navigation started");
+                      setRoverStatus("Navigating");
+                    } catch (err) {
+                      console.error("❌ Failed to start rover:", err);
+                      setStatusMessage("❌ Failed to start rover");
+                    } finally {
+                      setIsStarting(false);
+                    }
+                  }}
+                >
+                  {isStarting ? "Starting..." : "Start Navigation"}
+                </button>
+
+                <button
+                  className="btn-danger"
+                  disabled={isStopping || !user}
+                  onClick={async () => {
+                    setIsStopping(true);
+                    setStatusMessage("⏳ Stopping rover...");
+                    try {
+                      await api.post("/rover/stop");
+                      setStatusMessage("✅ Rover stopped");
+                      setRoverStatus("Stopped");
+                    } catch (err) {
+                      console.error("❌ Failed to stop rover:", err);
+                      setStatusMessage("❌ Failed to stop rover");
+                    } finally {
+                      setIsStopping(false);
+                    }
+                  }}
+                >
+                  {isStopping ? "Stopping..." : "Stop Rover"}
+                </button>
+
+                {user && (
+                  <button
+                    className="btn-secondary"
+                    disabled={isSaving || waypoints.length === 0}
+                    onClick={clearRoute}
+                  >
+                    {isSaving ? "Clearing..." : "Clear All Waypoints"}
+                  </button>
+                )}
+              </div>
+
+              {statusMessage && (
+                <div className="planner-status-message">{statusMessage}</div>
+              )}
+            </div>
+
+            <div className="planner-panel-footer">
+              <span>
+                {roverConnected ? "🟢 Connected to Rover" : "🔴 Rover Offline"}
+              </span>
+              <span>
+                IP: {roverIp || "—"} • Ping:{" "}
+                {pingMs !== null ? `${pingMs}ms` : "—"}
+              </span>
+            </div>
           </div>
-        )}
-        
-        <MapContainer
-          key={`${userPosition.lat}-${userPosition.lng}`}
-          center={[userPosition.lat, userPosition.lng]}
-          zoom={18}
-          style={{ width: "100%", height: "100%" }}
-          className="map-container"
-          whenCreated={(map) => {
-            console.log("🗺️ Map created, initializing...");
-            setTimeout(() => {
-              map.invalidateSize();
-              setMapReady(true);
-              console.log("✅ Map ready!");
-            }, 300);
-          }}
-        >
-          <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <MapView
-            waypoints={waypoints}
-            roverPosition={roverPosition}
-            userPosition={userPosition}
-            onAdd={handleAddWaypoint}
-          />
-        </MapContainer>
+
+          <MapContainer
+            key={`${userPosition.lat}-${userPosition.lng}`}
+            center={[userPosition.lat, userPosition.lng]}
+            zoom={18}
+            style={{ width: "100%", height: "100%" }}
+            className="map"
+            whenCreated={(map) => {
+              console.log("🗺️ Map created, initializing...");
+              setTimeout(() => {
+                map.invalidateSize();
+                setMapReady(true);
+                console.log("✅ Map ready!");
+              }, 300);
+            }}
+          >
+            <TileLayer
+              attribution="&copy; OpenStreetMap contributors"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MapView
+              waypoints={waypoints}
+              roverPosition={roverPosition}
+              userPosition={userPosition}
+              onAdd={handleAddWaypoint}
+            />
+          </MapContainer>
+        </div>
       </div>
     </div>
   );

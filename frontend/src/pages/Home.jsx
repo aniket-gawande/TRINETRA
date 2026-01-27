@@ -1,11 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../App.css";
 import "./Home.css";
 import roveImg from "../public/rove.png";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Navigate to login with role
   const handleFarmerLogin = () => {
@@ -86,6 +88,244 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* ==================== DUAL LOGIN SECTION (ONLY BEFORE LOGIN) ==================== */}
+      {!user && (
+        <section className="section" style={{ 
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(2, 6, 23, 0.9) 100%)',
+          padding: '6rem 0 3rem',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '1px', background: 'linear-gradient(90deg, transparent, var(--primary), transparent)' }}></div>
+          
+          <div className="container">
+            {/* Section Header */}
+            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+              <h2 style={{ 
+                fontSize: 'clamp(2rem, 4vw, 3rem)', 
+                fontWeight: '800', 
+                marginBottom: '1rem',
+                background: 'linear-gradient(135deg, #fff 0%, var(--primary) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                Choose Your Portal
+              </h2>
+              <p style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)', color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+                Access specialized dashboards designed for your role
+              </p>
+            </div>
+
+            {/* Login Cards Grid */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+              gap: '3rem',
+              maxWidth: '1000px',
+              margin: '0 auto'
+            }}>
+              
+              {/* FARMER LOGIN CARD */}
+              <div className="glass-card" style={{ 
+                padding: 'clamp(2rem, 4vw, 2.5rem)',
+                textAlign: 'center',
+                background: 'linear-gradient(145deg, rgba(16, 185, 129, 0.12) 0%, rgba(20, 40, 30, 0.8) 100%)',
+                border: '2px solid rgba(16, 185, 129, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.4s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                e.currentTarget.style.borderColor = 'var(--primary)';
+                e.currentTarget.style.boxShadow = '0 20px 60px rgba(16, 185, 129, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🌾</div>
+                
+                <h3 style={{ 
+                  fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', 
+                  fontWeight: 'bold', 
+                  color: 'var(--primary)', 
+                  marginBottom: '1rem'
+                }}>
+                  Farmer Portal
+                </h3>
+                
+                <p style={{ 
+                  color: 'var(--text-muted)', 
+                  marginBottom: '2rem', 
+                  lineHeight: '1.7',
+                  fontSize: '0.95rem'
+                }}>
+                  Access real-time climate data, receive disaster alerts, and optimize farming decisions with AI-powered insights.
+                </p>
+
+                <div style={{ 
+                  marginBottom: '2rem',
+                  padding: '1.5rem',
+                  background: 'rgba(16, 185, 129, 0.05)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  textAlign: 'left'
+                }}>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
+                    ✅ Real-time Sensor Data
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
+                    ✅ Weather Predictions
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
+                    ✅ Disaster Alerts
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleFarmerLogin}
+                  style={{
+                    width: '100%',
+                    padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: 'clamp(0.95rem, 2vw, 1rem)',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: '44px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 35px rgba(16, 185, 129, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.4)';
+                  }}
+                >
+                  🌱 Login as Farmer
+                </button>
+              </div>
+
+              {/* ADMIN/GOVERNMENT LOGIN CARD */}
+              <div className="glass-card" style={{ 
+                padding: 'clamp(2rem, 4vw, 2.5rem)',
+                textAlign: 'center',
+                background: 'linear-gradient(145deg, rgba(245, 158, 11, 0.12) 0%, rgba(40, 30, 20, 0.8) 100%)',
+                border: '2px solid rgba(245, 158, 11, 0.3)',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.4s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                e.currentTarget.style.borderColor = 'var(--accent)';
+                e.currentTarget.style.boxShadow = '0 20px 60px rgba(245, 158, 11, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🏛️</div>
+                
+                <h3 style={{ 
+                  fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', 
+                  fontWeight: 'bold', 
+                  color: 'var(--accent)', 
+                  marginBottom: '1rem'
+                }}>
+                  Admin Portal
+                </h3>
+                
+                <p style={{ 
+                  color: 'var(--text-muted)', 
+                  marginBottom: '2rem', 
+                  lineHeight: '1.7',
+                  fontSize: '0.95rem'
+                }}>
+                  Monitor regional climate patterns, manage rover deployments, and coordinate disaster response with comprehensive analytics.
+                </p>
+
+                <div style={{ 
+                  marginBottom: '2rem',
+                  padding: '1.5rem',
+                  background: 'rgba(245, 158, 11, 0.05)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                  textAlign: 'left'
+                }}>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
+                    ✅ City-Wide Analytics
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
+                    ✅ Rover Fleet Management
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
+                    ✅ Policy Insights
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleAdminLogin}
+                  style={{
+                    width: '100%',
+                    padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: 'clamp(0.95rem, 2vw, 1rem)',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 25px rgba(245, 158, 11, 0.4)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: '44px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 12px 35px rgba(245, 158, 11, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(245, 158, 11, 0.4)';
+                  }}
+                >
+                  🏛️ Login as Admin
+                </button>
+              </div>
+
+            </div>
+
+            {/* Additional Info */}
+            <div style={{ 
+              textAlign: 'center', 
+              marginTop: '3rem',
+              padding: '1.5rem',
+              background: 'rgba(255, 255, 255, 0.02)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.05)'
+            }}>
+              <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+                🔒 Secure authentication powered by Firebase • 
+                Role-based access control • 
+                Real-time data synchronization
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ==================== ABOUT SECTION ==================== */}
       <section className="section" style={{ 
@@ -330,242 +570,6 @@ const Home = () => {
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{item.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ==================== DUAL LOGIN SECTION ==================== */}
-      <section className="section" style={{ 
-        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(2, 6, 23, 0.9) 100%)',
-        padding: '6rem 0',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '1px', background: 'linear-gradient(90deg, transparent, var(--primary), transparent)' }}></div>
-        
-        <div className="container">
-          {/* Section Header */}
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{ 
-              fontSize: 'clamp(2rem, 4vw, 3rem)', 
-              fontWeight: '800', 
-              marginBottom: '1rem',
-              background: 'linear-gradient(135deg, #fff 0%, var(--primary) 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              Choose Your Portal
-            </h2>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)', color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-              Access specialized dashboards designed for your role
-            </p>
-          </div>
-
-          {/* Login Cards Grid */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-            gap: '3rem',
-            maxWidth: '1000px',
-            margin: '0 auto'
-          }}>
-            
-            {/* FARMER LOGIN CARD */}
-            <div className="glass-card" style={{ 
-              padding: 'clamp(2rem, 4vw, 2.5rem)',
-              textAlign: 'center',
-              background: 'linear-gradient(145deg, rgba(16, 185, 129, 0.12) 0%, rgba(20, 40, 30, 0.8) 100%)',
-              border: '2px solid rgba(16, 185, 129, 0.3)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'all 0.4s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
-              e.currentTarget.style.borderColor = 'var(--primary)';
-              e.currentTarget.style.boxShadow = '0 20px 60px rgba(16, 185, 129, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🌾</div>
-              
-              <h3 style={{ 
-                fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', 
-                fontWeight: 'bold', 
-                color: 'var(--primary)', 
-                marginBottom: '1rem'
-              }}>
-                Farmer Portal
-              </h3>
-              
-              <p style={{ 
-                color: 'var(--text-muted)', 
-                marginBottom: '2rem', 
-                lineHeight: '1.7',
-                fontSize: '0.95rem'
-              }}>
-                Access real-time climate data, receive disaster alerts, and optimize farming decisions with AI-powered insights.
-              </p>
-
-              <div style={{ 
-                marginBottom: '2rem',
-                padding: '1.5rem',
-                background: 'rgba(16, 185, 129, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                textAlign: 'left'
-              }}>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
-                  ✅ Real-time Sensor Data
-                </div>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
-                  ✅ Weather Predictions
-                </div>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
-                  ✅ Disaster Alerts
-                </div>
-              </div>
-
-              <button 
-                onClick={handleFarmerLogin}
-                style={{
-                  width: '100%',
-                  padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: 'clamp(0.95rem, 2vw, 1rem)',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  minHeight: '44px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 12px 35px rgba(16, 185, 129, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.4)';
-                }}
-              >
-                🌱 Login as Farmer
-              </button>
-            </div>
-
-            {/* ADMIN/GOVERNMENT LOGIN CARD */}
-            <div className="glass-card" style={{ 
-              padding: 'clamp(2rem, 4vw, 2.5rem)',
-              textAlign: 'center',
-              background: 'linear-gradient(145deg, rgba(245, 158, 11, 0.12) 0%, rgba(40, 30, 20, 0.8) 100%)',
-              border: '2px solid rgba(245, 158, 11, 0.3)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'all 0.4s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
-              e.currentTarget.style.borderColor = 'var(--accent)';
-              e.currentTarget.style.boxShadow = '0 20px 60px rgba(245, 158, 11, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🏛️</div>
-              
-              <h3 style={{ 
-                fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', 
-                fontWeight: 'bold', 
-                color: 'var(--accent)', 
-                marginBottom: '1rem'
-              }}>
-                Admin Portal
-              </h3>
-              
-              <p style={{ 
-                color: 'var(--text-muted)', 
-                marginBottom: '2rem', 
-                lineHeight: '1.7',
-                fontSize: '0.95rem'
-              }}>
-                Monitor regional climate patterns, manage rover deployments, and coordinate disaster response with comprehensive analytics.
-              </p>
-
-              <div style={{ 
-                marginBottom: '2rem',
-                padding: '1.5rem',
-                background: 'rgba(245, 158, 11, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(245, 158, 11, 0.2)',
-                textAlign: 'left'
-              }}>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
-                  ✅ City-Wide Analytics
-                </div>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.8rem' }}>
-                  ✅ Rover Fleet Management
-                </div>
-                <div style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
-                  ✅ Policy Insights
-                </div>
-              </div>
-
-              <button 
-                onClick={handleAdminLogin}
-                style={{
-                  width: '100%',
-                  padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: 'clamp(0.95rem, 2vw, 1rem)',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 8px 25px rgba(245, 158, 11, 0.4)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  minHeight: '44px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 12px 35px rgba(245, 158, 11, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(245, 158, 11, 0.4)';
-                }}
-              >
-                🏛️ Login as Admin
-              </button>
-            </div>
-
-          </div>
-
-          {/* Additional Info */}
-          <div style={{ 
-            textAlign: 'center', 
-            marginTop: '3rem',
-            padding: '1.5rem',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.05)'
-          }}>
-            <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
-              🔒 Secure authentication powered by Firebase • 
-              Role-based access control • 
-              Real-time data synchronization
-            </p>
           </div>
         </div>
       </section>

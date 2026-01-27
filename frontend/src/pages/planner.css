@@ -7,7 +7,7 @@
 }
 
 .planner-container {
-  display: flex;
+  position: relative;
   height: calc(100vh - 80px);
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   overflow: hidden;
@@ -160,7 +160,8 @@
    MAP CONTAINER - RESPONSIVE
    ============================================ */
 .map-container {
-  flex: 1;
+  width: 100%;
+  height: 100%;
   display: flex;
   position: relative;
   overflow: hidden;
@@ -170,6 +171,189 @@
   width: 100%;
   height: 100%;
   z-index: 10;
+}
+
+/* ============================================
+   OVERLAY CONTROL PANEL (Waypoint / Rover)
+   ============================================ */
+.planner-panel {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 320px;
+  max-height: 80vh;
+  background: #0b1220;
+  border-radius: 10px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.planner-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  color: #e5e7eb;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.planner-panel-header-icons span {
+  margin-left: 0.5rem;
+}
+
+.planner-panel-body {
+  padding: 0.75rem 1rem 0.5rem;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.08), transparent 55%),
+    #020617;
+  display: flex;
+  flex-direction: column;
+}
+
+.planner-panel-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.badge {
+  background: #22c55e;
+  color: #022c22;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.planner-waypoint-list {
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.planner-waypoint-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.planner-waypoint-list::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 999px;
+}
+
+.planner-waypoint-empty {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.planner-waypoint-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.planner-waypoint-dot {
+  width: 46px;
+  height: 22px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #f9fafb;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+
+.planner-waypoint-coords {
+  font-size: 0.75rem;
+  color: #e5e7eb;
+  font-family: "Menlo", "Consolas", monospace;
+}
+
+.planner-panel-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.planner-panel-buttons button {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.planner-panel-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+}
+
+.btn-secondary {
+  background: #111827;
+  color: #e5e7eb;
+  border: 1px solid #374151;
+}
+
+.planner-panel-buttons button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.planner-status-message {
+  font-size: 0.75rem;
+  color: #e5e7eb;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  margin-bottom: 0.4rem;
+}
+
+.planner-panel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  color: #e5e7eb;
+  background: #020617;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
 }
 
 .leaflet-container {
@@ -299,30 +483,21 @@
 /* Tablet - 768px and below */
 @media (max-width: 768px) {
   .planner-container {
-    flex-direction: column;
-    height: 100%;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 280px;
     height: calc(100vh - 80px);
-    z-index: 48;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
   }
 
   .map-container {
     width: 100%;
     height: calc(100vh - 80px);
     position: relative;
+  }
+
+  .planner-panel {
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 360px;
   }
 }
 
