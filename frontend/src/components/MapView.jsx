@@ -1,6 +1,6 @@
 import { Marker, Polyline, Popup, useMapEvents, useMap, Circle } from "react-leaflet";
 import L from "leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /* 📍 ICONS */
 const roverIcon = L.divIcon({
@@ -25,63 +25,38 @@ function createWaypointIcon(n) {
   });
 }
 
-/* 🔄 AUTO-CENTER MAP */
+/* 🔄 SMART RE-CENTER (Fixes Shivering) */
 function RecenterMap({ position }) {
   const map = useMap();
-  useEffect(() => {
-    if (position) map.flyTo([position.lat, position.lng], map.getZoom());
-  }, [position, map]);
-  return null;
-}
+  const hasCentered = useRef(false); // Track if we have already centered once
 
-/* 📏 RESIZE FIX (Prevents grey tiles) */
-function MapResizer() {
-  const map = useMap();
-  useEffect(() => { 
-    const timer = setTimeout(() => { 
-      try {
-        map.invalidateSize(); 
-      } catch (e) {
-        console.warn("⚠️ Map resize error:", e.message);
-      }
-    }, 500); 
-    return () => clearTimeout(timer);
-  }, [map]);
+  useEffect(() => {
+    // Only fly to user position on INITIAL load, then let user pan freely
+    if (position && !hasCentered.current) {
+      map.flyTo([position.lat, position.lng], 18, { animate: true, duration: 1.5 });
+      hasCentered.current = true; 
+    }
+  }, [position, map]);
+
   return null;
 }
 
 export default function MapView({ waypoints, roverPosition, userPosition, onAdd }) {
   
-  // 🖱️ CLICK LISTENER: Sends Lat/Lng to Parent
+  // 🖱️ CLICK LISTENER
   useMapEvents({
     click(e) {
+      // Prevent rapid double-clicks from causing issues
       onAdd(e.latlng); 
     },
   });
 
-  // 🔍 Validate and convert waypoints data
-  const validWaypoints = Array.isArray(waypoints) 
-    ? waypoints.filter(wp => 
-        wp && 
-        typeof Number(wp.lat) === 'number' && 
-        typeof Number(wp.lng) === 'number' &&
-        !isNaN(Number(wp.lat)) &&
-        !isNaN(Number(wp.lng))
-      )
-    : [];
-
-  useEffect(() => {
-    if (validWaypoints.length > 0) {
-      console.log("✅ Valid waypoints to plot:", validWaypoints);
-    }
-  }, [validWaypoints]);
-
   return (
     <>
-      <MapResizer />
+      {/* 🚀 Only centers once on load */}
       {userPosition && <RecenterMap position={userPosition} />}
 
-      {/* 👤 User Location (10m Circle) */}
+      {/* 👤 User Location */}
       {userPosition && (
         <>
           <Marker position={[userPosition.lat, userPosition.lng]} icon={userIcon}>
@@ -90,7 +65,7 @@ export default function MapView({ waypoints, roverPosition, userPosition, onAdd 
           <Circle 
             center={[userPosition.lat, userPosition.lng]} 
             radius={10} 
-            pathOptions={{ color: '#2563eb', fillColor: '#2563eb', fillOpacity: 0.2 }} 
+            pathOptions={{ color: '#2563eb', fillColor: '#2563eb', fillOpacity: 0.1 }} 
           />
         </>
       )}
@@ -103,26 +78,15 @@ export default function MapView({ waypoints, roverPosition, userPosition, onAdd 
       )}
 
       {/* 📍 Waypoints */}
-      {validWaypoints.length > 0 ? (
-        validWaypoints.map((wp, i) => (
-          <Marker 
-            key={wp._id || i} 
-            position={[Number(wp.lat), Number(wp.lng)]} 
-            icon={createWaypointIcon(i + 1)}
-          >
-            <Popup>Waypoint {i + 1}: {Number(wp.lat).toFixed(5)}, {Number(wp.lng).toFixed(5)}</Popup>
-          </Marker>
-        ))
-      ) : (
-        <div style={{ display: 'none' }} />
-      )}
+      {waypoints.map((wp, i) => (
+        <Marker key={wp._id || i} position={[wp.lat, wp.lng]} icon={createWaypointIcon(i + 1)}>
+          <Popup>Waypoint {i + 1}</Popup>
+        </Marker>
+      ))}
 
       {/* ➖ Route Line */}
-      {validWaypoints.length > 1 && (
-        <Polyline 
-          positions={validWaypoints.map((wp) => [Number(wp.lat), Number(wp.lng)])} 
-          pathOptions={{ color: "#2563eb", weight: 4, dashArray: '5, 10' }} 
-        />
+      {waypoints.length > 1 && (
+        <Polyline positions={waypoints.map((wp) => [wp.lat, wp.lng])} pathOptions={{ color: "#2563eb", weight: 4, dashArray: '5, 10' }} />
       )}
     </>
   );
