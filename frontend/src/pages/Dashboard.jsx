@@ -232,8 +232,8 @@ export default function Dashboard() {
             status={getTempStatus(latestData?.temperature)}
           />
           <SensorCard 
-            icon="💧" 
-            title="Humidity" 
+            icon="🌱" 
+            title="Soil Moisture" 
             value={latestData?.humidity?.toFixed(1) || "N/A"}
             unit="%"
             status={getHumidityStatus(latestData?.humidity)}
@@ -255,36 +255,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Soil Quality Section */}
-      <section className="soil-quality-section">
-        <h2>🌱 Soil Quality Analysis</h2>
-        <div className="soil-cards">
-          <SoilQualityCard 
-            metric="Moisture"
-            value={latestData?.humidity || 0}
-            optimal={[40, 60]}
-            description="Optimal soil moisture for crops"
-          />
-          <SoilQualityCard 
-            metric="Temperature"
-            value={latestData?.temperature || 0}
-            optimal={[20, 30]}
-            description="Ideal soil temperature"
-          />
-          <SoilQualityCard 
-            metric="Air Quality"
-            value={latestData?.aqi || 0}
-            optimal={[0, 50]}
-            description="Lower is better (fewer pollutants)"
-          />
-          <SoilQualityCard 
-            metric="Water Availability"
-            value={latestData?.waterLevel || 0}
-            optimal={[10, 30]}
-            description="Soil water content"
-          />
-        </div>
-      </section>
+
 
       {/* Charts Section */}
       <section className="charts-section">
@@ -312,7 +283,7 @@ export default function Dashboard() {
         </div>
 
         <div className="chart-container">
-          <h3>🌡️ Temperature & Humidity Trend</h3>
+          <h3>� Temperature & Soil Moisture Trend</h3>
           {historyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={historyData}>
@@ -322,7 +293,7 @@ export default function Dashboard() {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="temperature" stroke="#ff7f50" name="Temperature (°C)" />
-                <Line type="monotone" dataKey="humidity" stroke="#4da6ff" name="Humidity (%)" />
+                <Line type="monotone" dataKey="humidity" stroke="#4da6ff" name="Soil Moisture (%)" />
               </LineChart>
             </ResponsiveContainer>
           ) : (
@@ -412,25 +383,4 @@ function SensorCard({ icon, title, value, unit, status }) {
   );
 }
 
-// Soil Quality Card Component
-function SoilQualityCard({ metric, value, optimal, description }) {
-  const isOptimal = value >= optimal[0] && value <= optimal[1];
-  
-  return (
-    <div className={`soil-card ${isOptimal ? 'optimal' : 'needs-attention'}`}>
-      <h4>{metric}</h4>
-      <p className="soil-value">{value.toFixed(1)}</p>
-      <p className="soil-range">Optimal: {optimal[0]} - {optimal[1]}</p>
-      <p className="soil-description">{description}</p>
-      <div className="soil-indicator">
-        <div 
-          className="indicator-bar"
-          style={{
-            width: `${Math.min(Math.max((value / optimal[1]) * 100, 0), 100)}%`,
-            background: isOptimal ? '#10b981' : '#f59e0b'
-          }}
-        ></div>
-      </div>
-    </div>
-  );
-}
+
