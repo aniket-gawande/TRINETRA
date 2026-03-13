@@ -1,1174 +1,311 @@
-/* planner.css - FULLY RESPONSIVE WITH SIDEBAR TOGGLE */
+/* planner.css - PREMIUM DUAL-MODE REDESIGN */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
 .planner-container {
-  position: relative;
-  height: calc(100vh - 80px);
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  overflow: hidden;
   display: flex;
+  height: calc(100vh - 72px);
+  background: #05080f;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ============================================
-   SIDEBAR TOGGLE BUTTON - DESKTOP & MOBILE
-   ============================================ */
-.sidebar-toggle-btn {
-  position: fixed;
-  top: 100px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border: 2px solid #1e40af;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 24px;
-  z-index: 100;
-  transition: all 0.3s ease;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-  min-height: 50px;
-  min-width: 50px;
-  padding: 0;
+/* ================== MAP AREA ================== */
+.map-area {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  z-index: 10;
 }
 
-.sidebar-toggle-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+.leaflet-map {
+  width: 100%;
+  height: 100%;
 }
 
-.sidebar-toggle-btn:active {
-  transform: translateY(0);
+/* Make Leaflet tiles slightly darker to fit dark theme if using CartoDB Voyager */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: opacity(0.95);
 }
 
-/* ============================================
-   SIDEBAR - SLIDE-OUT DRAWER
-   ============================================ */
+/* ================== SIDEBAR ================== */
 .sidebar {
-  width: 340px;
-  height: calc(100vh - 80px);
-  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-  border-right: 1px solid #475569;
+  width: 380px;
+  background: rgba(10, 15, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: fixed;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   left: 0;
-  top: 80px;
-  z-index: 99;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar.closed {
   transform: translateX(-100%);
 }
 
-.sidebar.open {
-  transform: translateX(0);
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
-}
-
 .sidebar-header {
-  padding: clamp(1rem, 2vw, 1.5rem);
-  border-bottom: 1px solid #475569;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-header h2 {
-  font-size: clamp(1rem, 2vw, 1.3rem);
-  color: #e2e8f0;
-  margin-bottom: 0.75rem;
+  color: #f8fafc;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
-.sidebar-header p {
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+/* ================== MODE SELECTOR ================== */
+.mode-selector {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  background: transparent;
   color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
+.mode-btn.active {
+  background: #1e293b;
+  color: #10b981;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ================== SIDEBAR CONTENT ================== */
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  padding: clamp(1rem, 2vw, 1.5rem) 0;
+  padding: 1.5rem 0;
 }
 
-.sidebar-content::-webkit-scrollbar {
-  width: 6px;
-}
+.sidebar-content::-webkit-scrollbar { width: 6px; }
+.sidebar-content::-webkit-scrollbar-track { background: transparent; }
+.sidebar-content::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-.sidebar-content::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-.sidebar-content::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 3px;
-}
-
-.sidebar-content::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-.sidebar-footer {
-  padding: clamp(1rem, 2vw, 1.5rem);
-  border-top: 1px solid #475569;
-  background: rgba(15, 23, 42, 0.5);
-}
-
-.sidebar-footer button {
-  width: 100%;
-  padding: clamp(0.75rem, 1.5vw, 1rem);
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 44px;
-}
-
-.sidebar-footer button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
-}
-
-.sidebar-footer button:active {
-  transform: scale(0.98);
-}
-
-/* ============================================
-   MOBILE TOGGLE BUTTON (Hidden - Using top-left toggle)
-   ============================================ */
-.mobile-toggle {
-  display: none;
-}
-
-/* ============================================
-   MOBILE SIDEBAR OVERLAY
-   ============================================ */
-.mobile-sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 80px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 98;
-  transition: opacity 0.3s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.mobile-sidebar-overlay.visible {
-  display: block;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.mobile-sidebar-overlay.hidden {
-  display: none;
-}
-
-/* ============================================
-   MAP CONTAINER - FULL WIDTH (No sidebar offset)
-   ============================================ */
-.map-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  flex: 1;
-  z-index: 10;
-}
-
-.map {
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* ============================================
-   OVERLAY CONTROL PANEL (Waypoint / Rover)
-   ============================================ */
-.planner-panel {
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  width: 320px;
-  max-height: 80vh;
-  background: #0b1220;
-  border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.4);
+/* Empty State */
+.empty-state {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  z-index: 30;
-}
-
-.planner-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-  color: #e5e7eb;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.planner-panel-header-icons span {
-  margin-left: 0.5rem;
-}
-
-.planner-panel-body {
-  padding: 0.75rem 1rem 0.5rem;
-  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%),
-    radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.08), transparent 55%),
-    #020617;
-  display: flex;
-  flex-direction: column;
-}
-
-.planner-panel-subheader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-  color: #e5e7eb;
-}
-
-.badge {
-  background: #22c55e;
-  color: #022c22;
-  font-size: 0.75rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
-  font-weight: 600;
-}
-
-.planner-waypoint-list {
-  max-height: 180px;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-  margin-bottom: 0.75rem;
-}
-
-.planner-waypoint-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.planner-waypoint-list::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 999px;
-}
-
-.planner-waypoint-empty {
-  font-size: 0.8rem;
-  color: #9ca3af;
-}
-
-.planner-waypoint-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.4rem;
-  padding: 0.35rem 0.45rem;
-  border-radius: 6px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-}
-
-.planner-waypoint-dot {
-  width: 46px;
-  height: 22px;
-  border-radius: 999px;
-  background: #2563eb;
-  color: #f9fafb;
-  font-size: 0.7rem;
-  font-weight: 600;
-  display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.5rem;
+  padding: 3rem 1.5rem;
+  color: #64748b;
+  text-align: center;
 }
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+.empty-state p { font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem; }
 
-.planner-waypoint-coords {
-  font-size: 0.75rem;
-  color: #e5e7eb;
-  font-family: "Menlo", "Consolas", monospace;
-}
-
-.planner-panel-buttons {
+/* Waypoint Cards */
+.waypoint-list-container {
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.5rem;
+  gap: 1rem;
 }
 
-.planner-panel-buttons button {
-  width: 100%;
-  padding: 0.45rem 0.6rem;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.planner-panel-buttons button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #f97316, #ea580c);
-  color: white;
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
-  color: white;
-}
-
-.btn-secondary {
-  background: #111827;
-  color: #e5e7eb;
-  border: 1px solid #374151;
-}
-
-.planner-panel-buttons button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-}
-
-.planner-status-message {
-  font-size: 0.75rem;
-  color: #e5e7eb;
-  background: rgba(15, 23, 42, 0.85);
-  border-radius: 6px;
-  padding: 0.35rem 0.5rem;
-  border: 1px solid rgba(59, 130, 246, 0.5);
-  margin-bottom: 0.4rem;
-}
-
-.planner-panel-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.7rem;
-  color: #e5e7eb;
-  background: #020617;
-  border-top: 1px solid rgba(31, 41, 55, 0.9);
-}
-
-.leaflet-container {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.leaflet-control-container {
-  font-size: clamp(0.7rem, 2vw, 0.85rem);
-}
-
-.leaflet-control {
-  border-radius: 6px;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 20;
-}
-
-.leaflet-control-zoom {
-  border: 1px solid #475569 !important;
-  background: rgba(30, 41, 59, 0.9) !important;
-  box-shadow: none !important;
-}
-
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out {
-  color: #e2e8f0 !important;
-  font-size: clamp(0.85rem, 2vw, 1rem) !important;
-  border-bottom: 1px solid #475569 !important;
-  background: transparent !important;
-}
-
-.leaflet-control-zoom-in:hover,
-.leaflet-control-zoom-out:hover {
-  background: rgba(16, 185, 129, 0.1) !important;
-  color: #10b981 !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: #1e293b !important;
-  border: 1px solid #475569 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-}
-
-.leaflet-popup-content-wrapper .leaflet-popup-content {
-  color: #e2e8f0 !important;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem) !important;
-  margin: 8px !important;
-  line-height: 1.5;
-}
-
-.leaflet-popup-tip {
-  background: #1e293b !important;
-  border: 1px solid #475569 !important;
-}
-
-/* ============================================
-   WAYPOINT CARDS - RESPONSIVE
-   ============================================ */
 .waypoint-card {
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
-  margin: 0 clamp(1rem, 2vw, 1.5rem) clamp(0.75rem, 1.5vw, 1rem);
-  padding: clamp(1rem, 2vw, 1.25rem);
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid #64748b;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
+.waypoint-card:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
 .waypoint-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #10b981, #34d399);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: #10b981;
 }
 
-.waypoint-card:hover::before {
-  transform: scaleX(1);
+.wp-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
 }
 
-.waypoint-card:active {
-  transform: scale(0.98);
+.wp-badge {
+  background: #10b981;
+  color: white;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  font-weight: 800; font-size: 0.8rem;
+  margin-right: 0.75rem;
 }
 
-.waypoint-card.active {
-  border-color: #10b981;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+.wp-header h3 {
+  color: #e2e8f0; font-size: 0.95rem; font-weight: 600; flex: 1;
 }
 
-.waypoint-card h3 {
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
-  color: #e2e8f0;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.waypoint-card p {
-  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-  color: #cbd5e1;
-  margin: 0.25rem 0;
-  line-height: 1.4;
+.wp-status {
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+  background: rgba(245, 158, 11, 0.15); color: #f59e0b;
+  padding: 2px 6px; border-radius: 4px;
 }
 
 .waypoint-coords {
-  font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-  color: #94a3b8;
-  font-family: 'Monaco', 'Menlo', monospace;
-  margin-top: 0.5rem;
-  word-break: break-all;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+  font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.8rem; color: #cbd5e1;
 }
 
-/* ============================================
-   RESPONSIVE BREAKPOINTS - COMPREHENSIVE
-   ============================================ */
+.coord-label { color: #64748b; font-size: 0.7rem; margin-right: 4px; }
 
-/* Desktop Large - 1440px and above */
-@media (min-width: 1440px) {
-  .sidebar {
-    width: 380px;
-  }
-
-  .planner-panel {
-    max-width: 420px;
-  }
-
-  .sidebar-toggle-btn {
-    width: 52px;
-    height: 52px;
-    font-size: 26px;
-    left: 30px;
-    top: 110px;
-  }
+/* ================== MANUAL CONTROLS (D-PAD) ================== */
+.manual-control-section {
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Desktop - 1024px to 1439px */
-@media (max-width: 1440px) and (min-width: 1024px) {
-  .sidebar {
-    width: 360px;
-  }
-
-  .planner-panel {
-    max-width: 400px;
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(1.15rem, 2vw, 1.3rem);
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.9rem, 1.8vw, 1rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.775rem, 1.5vw, 0.85rem);
-  }
+.manual-desc {
+  color: #94a3b8; font-size: 0.9rem; text-align: center; margin-bottom: 2.5rem;
 }
 
-/* Tablet Landscape - 1024px */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 320px;
-  }
-
-  .planner-panel {
-    max-width: 360px;
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(1.05rem, 2vw, 1.2rem);
-  }
-
-  .sidebar-header p {
-    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-  }
-
-  .planner-panel-header {
-    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-    padding: clamp(0.75rem, 1.5vw, 0.95rem);
-  }
-
-  .planner-waypoint-dot {
-    width: 40px;
-    height: 20px;
-    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
-  }
-
-  .planner-waypoint-coords {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-  }
-
-  .planner-panel-buttons button {
-    padding: clamp(0.4rem, 0.8vw, 0.5rem) clamp(0.5rem, 1vw, 0.6rem);
-    font-size: clamp(0.75rem, 1.2vw, 0.85rem);
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.85rem, 1.6vw, 0.95rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.7rem, 1.3vw, 0.8rem);
-  }
-
-  .waypoint-coords {
-    font-size: clamp(0.65rem, 1vw, 0.75rem);
-  }
+.d-pad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3rem;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3);
 }
 
-/* Tablet Portrait - 768px */
+.d-pad-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.d-pad-center {
+  width: 60px; height: 60px;
+  background: radial-gradient(circle, #334155, #1e293b);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
+}
+
+.d-pad-btn {
+  width: 60px; height: 60px;
+  background: linear-gradient(145deg, #3b82f6, #2563eb);
+  color: white; font-size: 1.5rem; font-weight: bold;
+  border: none; border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #1d4ed8, 0 10px 15px rgba(0,0,0,0.4);
+  transition: all 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.d-pad-btn:active, .d-pad-btn.active {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #1d4ed8, 0 4px 6px rgba(0,0,0,0.4);
+  background: linear-gradient(145deg, #60a5fa, #3b82f6);
+}
+
+.btn-stop {
+  width: 100%;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white; font-weight: 800; font-size: 1.1rem; letter-spacing: 2px;
+  border: none; border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  transition: all 0.2s;
+}
+
+.btn-stop:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6); }
+.btn-stop:active { transform: scale(0.98); }
+
+/* ================== FOOTER ================== */
+.sidebar-footer {
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status-toast {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399; font-size: 0.85rem; font-weight: 500;
+  padding: 0.6rem 1rem; border-radius: 6px; margin-bottom: 1rem; text-align: center;
+}
+
+.action-buttons {
+  display: flex; gap: 0.75rem;
+}
+
+.action-buttons button {
+  flex: 1; padding: 0.8rem; border: none; border-radius: 8px;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+}
+
+.action-buttons button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669); color: white;
+}
+.btn-primary:not(:disabled):hover { box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); transform: translateY(-1px); }
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1);
+}
+.btn-secondary:not(:disabled):hover { background: rgba(255, 255, 255, 0.12); }
+
+
+/* ================== TOGGLE & MOBILE ================== */
+.sidebar-toggle-btn {
+  position: absolute; top: 1.5rem; left: 1.5rem; z-index: 200;
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(10, 15, 26, 0.9); border: 1px solid rgba(255,255,255,0.1);
+  color: white; font-size: 1.5rem; cursor: pointer;
+  backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  display: flex !important;
+  align-items: center; 
+  justify-content: center;
+}
+
+.mobile-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 90;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+
 @media (max-width: 768px) {
-  .planner-container {
-    height: calc(100vh - 80px);
-  }
-
-  .map-container {
-    width: 100%;
-    height: calc(100vh - 80px);
-    position: relative;
-  }
-
-  .planner-panel {
-    top: clamp(1rem, 2vw, 1.5rem);
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - clamp(1.5rem, 3vw, 2rem));
-    max-width: 380px;
-    border-radius: clamp(10px, 2vw, 12px);
-  }
-
-  .sidebar {
-    width: 280px;
-    border-radius: clamp(8px, 1.5vw, 10px);
-  }
-
-  .sidebar-toggle-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 22px;
-    left: 16px;
-    top: 100px;
-  }
-
-  .sidebar-header {
-    padding: clamp(0.875rem, 1.5vw, 1.125rem);
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(1rem, 2.2vw, 1.15rem);
-    margin-bottom: clamp(0.5rem, 1vw, 0.625rem);
-  }
-
-  .sidebar-header p {
-    font-size: clamp(0.7rem, 1.3vw, 0.8rem);
-  }
-
-  .sidebar-content {
-    padding: clamp(0.75rem, 1.5vw, 1rem) 0;
-  }
-
-  .planner-panel-header {
-    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-    padding: clamp(0.625rem, 1.2vw, 0.875rem);
-  }
-
-  .planner-panel-body {
-    padding: clamp(0.625rem, 1.2vw, 0.75rem) clamp(0.75rem, 1.5vw, 1rem) clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-waypoint-list {
-    max-height: 150px;
-    padding-right: clamp(0.2rem, 0.5vw, 0.25rem);
-    margin-bottom: clamp(0.625rem, 1.2vw, 0.75rem);
-  }
-
-  .planner-waypoint-dot {
-    width: 38px;
-    height: 20px;
-    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
-    margin-right: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-waypoint-coords {
-    font-size: clamp(0.675rem, 1.2vw, 0.775rem);
-  }
-
-  .planner-panel-buttons {
-    gap: clamp(0.3rem, 0.6vw, 0.4rem);
-    margin-bottom: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-panel-buttons button {
-    padding: clamp(0.375rem, 0.8vw, 0.475rem) clamp(0.5rem, 1vw, 0.625rem);
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-    border-radius: 5px;
-  }
-
-  .planner-status-message {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-    padding: clamp(0.3rem, 0.6vw, 0.375rem) clamp(0.4rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-panel-footer {
-    padding: clamp(0.375rem, 0.8vw, 0.5rem) clamp(0.625rem, 1.2vw, 0.75rem);
-    font-size: clamp(0.65rem, 1vw, 0.75rem);
-  }
-
-  .waypoint-card {
-    margin: 0 clamp(0.75rem, 1.5vw, 1.25rem) clamp(0.5rem, 1vw, 0.75rem);
-    padding: clamp(0.75rem, 1.5vw, 1rem);
-    border-radius: 7px;
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-    margin-bottom: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-    margin: clamp(0.175rem, 0.4vw, 0.25rem) 0;
-  }
-
-  .waypoint-coords {
-    font-size: clamp(0.65rem, 1vw, 0.75rem);
-    margin-top: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .leaflet-control-zoom {
-    border: 1px solid #475569 !important;
-  }
-
-  .leaflet-control-zoom-in,
-  .leaflet-control-zoom-out {
-    font-size: clamp(0.9rem, 2vw, 1rem) !important;
-  }
-
-  .leaflet-popup-content-wrapper {
-    border-radius: 6px !important;
-  }
-
-  .leaflet-popup-content-wrapper .leaflet-popup-content {
-    font-size: clamp(0.75rem, 1.3vw, 0.85rem) !important;
-    margin: clamp(6px, 1vw, 8px) !important;
-  }
-
-  .mobile-toggle {
-    width: 48px;
-    height: 48px;
-    font-size: clamp(20px, 4vw, 24px);
-    bottom: clamp(15px, 3vw, 20px);
-    right: clamp(12px, 2.5vw, 18px);
-  }
+  .sidebar-toggle-btn { display: flex !important; align-items: center; justify-content: center; }
+  .sidebar { width: 320px; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+  .action-buttons { flex-direction: column; }
 }
 
-/* Tablet - 1024px */
-@media (max-width: 1024px) {
-  .sidebar-toggle-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-    top: 100px;
-    left: 20px;
-  }
-}
-
-/* Mobile - 640px and below */
-@media (max-width: 640px) {
-  .planner-container {
-    height: calc(100vh - 80px);
-    position: relative;
-  }
-
-  .sidebar-toggle-btn {
-    width: 46px;
-    height: 46px;
-    font-size: 20px;
-    top: 95px;
-    left: 14px;
-  }
-
-  .map-container {
-    width: 100%;
-    height: 100%;
-  }
-
-  .sidebar {
-    width: 260px;
-    border-radius: 8px;
-  }
-
-  .sidebar-header {
-    padding: clamp(0.75rem, 1.2vw, 0.875rem);
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(0.9rem, 2vw, 1.05rem);
-  }
-
-  .sidebar-header p {
-    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
-  }
-
-  .sidebar-footer button {
-    padding: clamp(0.625rem, 1.2vw, 0.75rem);
-    font-size: clamp(0.7rem, 1.3vw, 0.8rem);
-    min-height: 42px;
-  }
-
-  .planner-panel {
-    top: clamp(0.75rem, 1.5vw, 1.25rem);
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - clamp(1.25rem, 2.5vw, 1.5rem));
-    max-width: 360px;
-    border-radius: 10px;
-  }
-
-  .planner-panel-header {
-    font-size: clamp(0.75rem, 1.3vw, 0.85rem);
-    padding: clamp(0.625rem, 1vw, 0.75rem);
-  }
-
-  .planner-panel-body {
-    padding: clamp(0.625rem, 1.2vw, 0.75rem) clamp(0.625rem, 1.2vw, 0.875rem);
-  }
-
-  .planner-panel-subheader {
-    font-size: clamp(0.75rem, 1.3vw, 0.825rem);
-    margin-bottom: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .badge {
-    font-size: clamp(0.65rem, 1.1vw, 0.75rem);
-    padding: clamp(0.08rem, 0.3vw, 0.1rem) clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-waypoint-list {
-    max-height: 140px;
-    margin-bottom: clamp(0.5rem, 1vw, 0.625rem);
-  }
-
-  .planner-waypoint-dot {
-    width: 36px;
-    height: 19px;
-    font-size: clamp(0.6rem, 1vw, 0.7rem);
-    margin-right: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-waypoint-coords {
-    font-size: clamp(0.65rem, 1.1vw, 0.75rem);
-  }
-
-  .planner-panel-buttons {
-    gap: clamp(0.25rem, 0.5vw, 0.375rem);
-    margin-bottom: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .planner-panel-buttons button {
-    padding: clamp(0.35rem, 0.7vw, 0.45rem) clamp(0.45rem, 0.9vw, 0.575rem);
-    font-size: clamp(0.675rem, 1.1vw, 0.775rem);
-    border-radius: 5px;
-  }
-
-  .planner-status-message {
-    font-size: clamp(0.65rem, 1.1vw, 0.75rem);
-    padding: clamp(0.3rem, 0.6vw, 0.375rem) clamp(0.375rem, 0.8vw, 0.5rem);
-    margin-bottom: clamp(0.3rem, 0.6vw, 0.4rem);
-  }
-
-  .waypoint-card {
-    margin: 0 clamp(0.625rem, 1.2vw, 1rem) clamp(0.5rem, 1vw, 0.625rem);
-    padding: clamp(0.625rem, 1.2vw, 0.875rem);
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.75rem, 1.3vw, 0.85rem);
-    margin-bottom: clamp(0.375rem, 0.7vw, 0.475rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.65rem, 1.1vw, 0.75rem);
-  }
-
-  .waypoint-coords {
-    font-size: clamp(0.6rem, 1vw, 0.7rem);
-  }
-
-  .mobile-toggle {
-    width: 44px;
-    height: 44px;
-    font-size: clamp(18px, 3.5vw, 20px);
-    bottom: clamp(12px, 2.5vw, 16px);
-    right: clamp(12px, 2vw, 16px);
-  }
-}
-
-/* Small Mobile - 480px */
 @media (max-width: 480px) {
-  .sidebar {
-    width: 240px;
-    border-radius: 8px;
-  }
-
-  .sidebar-toggle-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
-    top: 90px;
-    left: 12px;
-  }
-
-  .sidebar-header {
-    padding: clamp(0.625rem, 1vw, 0.75rem);
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-    margin-bottom: clamp(0.375rem, 0.8vw, 0.5rem);
-  }
-
-  .sidebar-header p {
-    font-size: clamp(0.625rem, 1vw, 0.7rem);
-  }
-
-  .sidebar-content {
-    padding: clamp(0.625rem, 1.2vw, 0.875rem) 0;
-  }
-
-  .sidebar-footer {
-    padding: clamp(0.625rem, 1.2vw, 0.875rem);
-  }
-
-  .sidebar-footer button {
-    padding: clamp(0.55rem, 1rem, 0.65rem);
-    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
-    min-height: 40px;
-    border-radius: 5px;
-  }
-
-  .planner-panel {
-    top: clamp(0.5rem, 1vw, 0.875rem);
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - clamp(1rem, 2vw, 1.25rem));
-    max-width: 340px;
-    border-radius: 9px;
-  }
-
-  .planner-panel-header {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-    padding: clamp(0.5rem, 1vw, 0.625rem);
-  }
-
-  .planner-panel-body {
-    padding: clamp(0.5rem, 1vw, 0.625rem) clamp(0.5rem, 1vw, 0.75rem) clamp(0.3rem, 0.6vw, 0.4rem);
-  }
-
-  .planner-panel-subheader {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-  }
-
-  .badge {
-    font-size: clamp(0.6rem, 1vw, 0.7rem);
-  }
-
-  .planner-waypoint-list {
-    max-height: 120px;
-  }
-
-  .planner-waypoint-item {
-    padding: clamp(0.3rem, 0.6vw, 0.375rem) clamp(0.375rem, 0.8vw, 0.5rem);
-    margin-bottom: clamp(0.3rem, 0.6vw, 0.375rem);
-  }
-
-  .planner-waypoint-dot {
-    width: 34px;
-    height: 18px;
-    font-size: clamp(0.55rem, 0.95vw, 0.65rem);
-    margin-right: clamp(0.375rem, 0.75vw, 0.5rem);
-  }
-
-  .planner-waypoint-coords {
-    font-size: clamp(0.6rem, 1vw, 0.7rem);
-  }
-
-  .planner-panel-buttons {
-    gap: clamp(0.2rem, 0.4vw, 0.3rem);
-  }
-
-  .planner-panel-buttons button {
-    padding: clamp(0.3rem, 0.6vw, 0.4rem) clamp(0.4rem, 0.8vw, 0.5rem);
-    font-size: clamp(0.625rem, 1vw, 0.725rem);
-    border-radius: 4px;
-  }
-
-  .planner-status-message {
-    font-size: clamp(0.625rem, 1vw, 0.725rem);
-    padding: clamp(0.25rem, 0.5vw, 0.3rem) clamp(0.375rem, 0.75vw, 0.5rem);
-  }
-
-  .planner-panel-footer {
-    padding: clamp(0.3rem, 0.6vw, 0.4rem) clamp(0.5rem, 1vw, 0.625rem);
-    font-size: clamp(0.6rem, 0.95vw, 0.7rem);
-  }
-
-  .waypoint-card {
-    margin: 0 clamp(0.5rem, 1vw, 0.75rem) clamp(0.5rem, 1vw, 0.625rem);
-    padding: clamp(0.625rem, 1.2vw, 0.75rem);
-    border-radius: 6px;
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.625rem, 1vw, 0.7rem);
-  }
-
-  .waypoint-coords {
-    font-size: clamp(0.575rem, 0.95vw, 0.65rem);
-  }
-
-  .mobile-toggle {
-    width: 42px;
-    height: 42px;
-    font-size: clamp(16px, 3vw, 18px);
-    bottom: clamp(10px, 2vw, 15px);
-    right: clamp(10px, 2vw, 15px);
-  }
-
-  .leaflet-popup-content-wrapper {
-    border-radius: 5px !important;
-  }
-
-  .leaflet-popup-content-wrapper .leaflet-popup-content {
-    font-size: clamp(0.7rem, 1.2vw, 0.8rem) !important;
-    margin: clamp(5px, 0.8vw, 6px) !important;
-  }
-}
-
-/* Extra Small - 360px and below */
-@media (max-width: 360px) {
-  .sidebar {
-    width: 220px;
-  }
-
-  .sidebar-toggle-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
-    top: 85px;
-    left: 10px;
-  }
-
-  .planner-panel {
-    width: calc(100% - clamp(0.75rem, 1.5vw, 1rem));
-    max-width: 300px;
-  }
-
-  .sidebar-header h2 {
-    font-size: clamp(0.775rem, 1.5vw, 0.875rem);
-  }
-
-  .planner-panel-header {
-    font-size: clamp(0.65rem, 1.1vw, 0.75rem);
-  }
-
-  .planner-waypoint-dot {
-    width: 32px;
-    height: 17px;
-    font-size: clamp(0.5rem, 0.85vw, 0.6rem);
-  }
-
-  .waypoint-card {
-    padding: clamp(0.5rem, 1vw, 0.625rem);
-  }
-
-  .waypoint-card h3 {
-    font-size: clamp(0.65rem, 1vw, 0.75rem);
-  }
-
-  .waypoint-card p {
-    font-size: clamp(0.6rem, 0.95vw, 0.65rem);
-  }
-
-  .mobile-toggle {
-    width: 40px;
-    height: 40px;
-    font-size: clamp(14px, 2.5vw, 16px);
-  }
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.sidebar {
-  animation: slideIn 0.3s ease;
-}
-
-.sidebar.closing {
-  animation: slideOut 0.3s ease;
-}
-
-/* ============================================
-   TOUCH-FRIENDLY ADJUSTMENTS
-   ============================================ */
-@media (hover: none) and (pointer: coarse) {
-  .waypoint-card {
-    min-height: 60px;
-  }
-
-  .sidebar-footer button,
-  .mobile-toggle {
-    min-height: 48px;
-    min-width: 48px;
-  }
-
-  .waypoint-card:active {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    border-color: #10b981;
-  }
-}
-
-/* ============================================
-   LANDSCAPE ORIENTATION
-   ============================================ */
-@media (max-height: 600px) and (max-width: 768px) {
-  .sidebar-header,
-  .sidebar-footer {
-    padding: 0.75rem 1rem;
-  }
-
-  .waypoint-card {
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .waypoint-card h3 {
-    margin-bottom: 0.25rem;
-  }
+  .sidebar { width: 100%; }
 }
