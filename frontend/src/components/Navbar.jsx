@@ -126,12 +126,12 @@ const Navbar = () => {
           }}>
             {/* Platform Dropdown */}
             <div className="nav-dropdown" style={{ position: "relative" }}>
-              <span style={navLinkStyle}
+              <Link to="/planner" style={navLinkStyle} onClick={closeMenu}
                 onMouseEnter={(e) => e.currentTarget.style.color = "#10b981"}
                 onMouseLeave={(e) => e.currentTarget.style.color = "#e2e8f0"}
               >
                 Platform <ChevronDown />
-              </span>
+              </Link>
               <div className="nav-dropdown-menu" style={dropdownStyle}>
                 <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>Overview</Link>
                 <Link to="/planner" style={dropdownLinkStyle} onClick={closeMenu}>Map Planner</Link>
@@ -141,21 +141,21 @@ const Navbar = () => {
 
             {/* Solutions Dropdown */}
             <div className="nav-dropdown" style={{ position: "relative" }}>
-              <span style={navLinkStyle}
+              <Link to="/dashboard" style={navLinkStyle} onClick={closeMenu}
                 onMouseEnter={(e) => e.currentTarget.style.color = "#10b981"}
                 onMouseLeave={(e) => e.currentTarget.style.color = "#e2e8f0"}
               >
                 Solutions <ChevronDown />
-              </span>
+              </Link>
               <div className="nav-dropdown-menu" style={dropdownStyle}>
                 <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>Soil Monitoring</Link>
                 <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>Weather Insights</Link>
-                <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>AI Analytics</Link>
+                <Link to="/dashboard" style={dropdownLinkStyle} onClick={closeMenu}>AI Analytics</Link>
               </div>
             </div>
 
             {/* Static Links */}
-            <Link to="/" style={navLinkStyle}
+            <Link to="/dashboard" style={navLinkStyle} onClick={closeMenu}
               onMouseEnter={(e) => e.target.style.color = "#10b981"}
               onMouseLeave={(e) => e.target.style.color = "#e2e8f0"}
             >
@@ -189,9 +189,9 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <Link to="/login" onClick={closeMenu} style={{
+              <Link to="/dashboard" onClick={closeMenu} style={{
                 padding: "0.55rem 1.3rem",
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
                 color: "white",
                 borderRadius: "8px",
                 textDecoration: "none",
@@ -200,12 +200,12 @@ const Navbar = () => {
                 display: "inline-flex",
                 alignItems: "center",
                 transition: "all 0.3s ease",
-                boxShadow: "0 3px 12px rgba(16, 185, 129, 0.2)",
+                boxShadow: "0 3px 12px rgba(59, 130, 246, 0.2)",
               }}
-                onMouseEnter={(e) => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = "0 6px 20px rgba(16, 185, 129, 0.35)"; }}
-                onMouseLeave={(e) => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = "0 3px 12px rgba(16, 185, 129, 0.2)"; }}
+                onMouseEnter={(e) => { e.target.style.transform = "translateY(-1px)"; e.target.style.boxShadow = "0 6px 20px rgba(59, 130, 246, 0.35)"; }}
+                onMouseLeave={(e) => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = "0 3px 12px rgba(59, 130, 246, 0.2)"; }}
               >
-                Get Demo
+                Data Analytics
               </Link>
             )}
           </div>
@@ -249,8 +249,8 @@ const Navbar = () => {
                 <Link to="/dashboard" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>Dashboard</Link>
               </>
             )}
-            <Link to="/" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>Data</Link>
-            <Link to="/" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>About</Link>
+            <Link to="/dashboard" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>Data</Link>
+            <Link to="/about" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>About</Link>
 
             {user ? (
               <button onClick={handleLogout} style={{
@@ -267,18 +267,18 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <Link to="/login" onClick={closeMenu} style={{
+              <Link to="/dashboard" onClick={closeMenu} style={{
                 marginTop: "0.5rem",
                 padding: "0.75rem",
                 textAlign: "center",
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
                 color: "white",
                 borderRadius: "8px",
                 textDecoration: "none",
                 fontWeight: "600",
                 fontSize: "0.9rem",
               }}>
-                Get Demo
+                Data Analytics
               </Link>
             )}
           </div>

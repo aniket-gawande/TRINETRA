@@ -24,7 +24,7 @@ export default function App() {
         />
         <Route
           path="/dashboard"
-          element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
+          element={<Dashboard />}
         />
       </Routes>
     </AuthProvider>
