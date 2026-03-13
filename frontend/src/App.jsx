@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-
+import Resources from './pages/Resources';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -25,6 +25,14 @@ export default function App() {
           path="/planner"
           element={<ProtectedRoute><Planner /></ProtectedRoute>}
         />
+        <Route 
+  path="/resources" 
+  element={
+    <ProtectedRoute>
+      <Resources />
+    </ProtectedRoute>
+  } 
+/>
         <Route
           path="/dashboard"
           element={<Dashboard />}

@@ -161,6 +161,20 @@ const Navbar = () => {
             >
               Farmer Sales
             </Link>
+            <Link
+  to="/resources"
+  style={{
+    color: "#e2e8f0",
+    fontWeight: "500",
+    textDecoration: "none",
+    fontSize: "clamp(0.85rem, 1.5vw, 1rem)",
+    transition: "color 0.3s ease",
+  }}
+  onMouseEnter={(e) => (e.target.style.color = "#10B981")}
+  onMouseLeave={(e) => (e.target.style.color = "#e2e8f0")}
+>
+  Resources
+</Link>
             <Link to="/dashboard" style={navLinkStyle} onClick={closeMenu}
               onMouseEnter={(e) => e.target.style.color = "#10b981"}
               onMouseLeave={(e) => e.target.style.color = "#e2e8f0"}
