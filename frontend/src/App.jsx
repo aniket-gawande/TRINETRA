@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Planner from "./pages/Planner";
 import Dashboard from "./pages/Dashboard";
+import FarmerSales from "./pages/FarmerSales";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 
@@ -17,6 +18,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        
+        <Route path="/sales" element={<FarmerSales />} />
 
         <Route
           path="/planner"

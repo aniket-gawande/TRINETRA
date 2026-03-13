@@ -5,6 +5,7 @@ import roverRoutes from "./routes/rover.routes.js";
 import waypointRoutes from "./routes/waypoint.routes.js";
 import sensorRoutes from "./routes/sensor.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import farmerSalesRoutes from "./routes/farmerSales.routes.js";
 
 // Import models for Bluetooth rover system
 import Rover from "./models/rover.model.js";
@@ -41,5 +42,6 @@ app.get("/", (req, res) => {
 app.use("/api/rover", roverRoutes);
 app.use("/api/waypoints", waypointRoutes);
 app.use("/api/sensors", sensorRoutes);
+app.use("/api/sales", farmerSalesRoutes);
 
 export default app;

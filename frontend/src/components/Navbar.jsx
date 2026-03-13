@@ -148,13 +148,19 @@ const Navbar = () => {
                 Solutions <ChevronDown />
               </Link>
               <div className="nav-dropdown-menu" style={dropdownStyle}>
-                <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>Soil Monitoring</Link>
+                <Link to="/sales" style={dropdownLinkStyle} onClick={closeMenu}>Farmer Sales</Link>
                 <Link to="/" style={dropdownLinkStyle} onClick={closeMenu}>Weather Insights</Link>
                 <Link to="/dashboard" style={dropdownLinkStyle} onClick={closeMenu}>AI Analytics</Link>
               </div>
             </div>
 
             {/* Static Links */}
+            <Link to="/sales" style={navLinkStyle} onClick={closeMenu}
+              onMouseEnter={(e) => e.target.style.color = "#10b981"}
+              onMouseLeave={(e) => e.target.style.color = "#e2e8f0"}
+            >
+              Farmer Sales
+            </Link>
             <Link to="/dashboard" style={navLinkStyle} onClick={closeMenu}
               onMouseEnter={(e) => e.target.style.color = "#10b981"}
               onMouseLeave={(e) => e.target.style.color = "#e2e8f0"}
@@ -250,6 +256,7 @@ const Navbar = () => {
               </>
             )}
             <Link to="/dashboard" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>Data</Link>
+            <Link to="/sales" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>Farmer Sales</Link>
             <Link to="/about" onClick={closeMenu} style={{ ...navLinkStyle, padding: "0.75rem" }}>About</Link>
 
             {user ? (
